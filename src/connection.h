@@ -47,11 +47,11 @@ static bool createConnection()
         return false;
     }
     else
-	{
-		dbOpenee = true;
-		return true;
-	}
-	dbOpenee = false;
+    {
+        dbOpenee = true;
+        return true;
+    }
+    dbOpenee = false;
 }
 
 #endif // CONNECTION_H

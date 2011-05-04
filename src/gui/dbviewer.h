@@ -49,7 +49,7 @@ private slots:
     void newCarSave();
 
 private:
-	void newCarReset();
+    void newCarReset();
     void createUI();
     void initializeModel(QSqlTableModel *model);
     QTableView *createView(const QString &title, QSqlTableModel *model);

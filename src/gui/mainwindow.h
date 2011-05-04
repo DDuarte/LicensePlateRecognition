@@ -150,7 +150,7 @@ private:
     QLineEdit *nameLineEdit;
     
     /* CV:, TODO: move to new file/class */
-    cv::Mat 	mImage2;
+    cv::Mat     mImage2;
     cv::Mat     tmpImg;
     IplImage    *sub;
 

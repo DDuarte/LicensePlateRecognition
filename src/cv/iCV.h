@@ -42,8 +42,8 @@ namespace rdm {
         virtual void Draw();
         virtual void Plate();
     
-    	static QImage MatToQImage(cv::Mat mat);
-    	static void ConvertToRGB(cv::Mat& src, cv::Mat& targ);
+        static QImage MatToQImage(cv::Mat mat);
+        static void ConvertToRGB(cv::Mat& src, cv::Mat& targ);
     };
 
 }

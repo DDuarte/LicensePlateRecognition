@@ -19,7 +19,7 @@ iCV::iCV(cv::Mat& source, cv::Mat& target, cv::Mat& fullImg, cv::Mat& plateImg,
     cv::setUseOptimized(true); // !? FASTAH
 
     sourceClone = source.clone();
-	plate = 0;
+    plate = 0;
 
     Match();
     Draw();
@@ -27,8 +27,8 @@ iCV::iCV(cv::Mat& source, cv::Mat& target, cv::Mat& fullImg, cv::Mat& plateImg,
 
     ConvertToRGB(sourceClone, fullImg);
     ConvertToRGB(plate, plateImg);
-	plate = 0;
-	sourceClone = 0;
+    plate = 0;
+    sourceClone = 0;
 
     qFull = MatToQImage(fullImg);
     qPlate = MatToQImage(plateImg);
@@ -55,8 +55,8 @@ void iCV::Plate()
     int width = size.width;
     int height = size.height;
 
-	int xPoint = foundPointsList[0].x + 5 + width * 0.5;
-	int yPoint = foundPointsList[0].y - height * 0.5;
+    int xPoint = foundPointsList[0].x + 5 + width * 0.5;
+    int yPoint = foundPointsList[0].y - height * 0.5;
     cv::Rect rect(xPoint, yPoint, 770, height + 10); // manually adjusted
     plate = source(rect);
 }

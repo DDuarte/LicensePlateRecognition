@@ -28,7 +28,7 @@
 #include "dbviewer.h"
 
 DBViewer::DBViewer(QWidget *parent):
-	QDialog(parent)
+    QDialog(parent)
 {
     setWindowTitle(tr("Base de dados"));
 
@@ -95,11 +95,11 @@ void DBViewer::createUI()
     dbViewerLayout->addLayout(buttonLayout);
 
     view->resizeColumnsToContents();
-	const int collumnCount = 9;
-	int width = 0;
-	for (int i = 0; i <= collumnCount; i++)
-		width += view->columnWidth(i);
-	width += newCarButton->width();
+    const int collumnCount = 9;
+    int width = 0;
+    for (int i = 0; i <= collumnCount; i++)
+        width += view->columnWidth(i);
+    width += newCarButton->width();
 
     this->setFixedWidth(width + 105);
 }
@@ -186,7 +186,7 @@ void DBViewer::newCar()
     buttonsNewCarLayout->addWidget(newCarExitButton);
     connect(newCarSaveButton, SIGNAL(clicked()), this, SLOT(newCarSave()));
     connect(newCarExitButton, SIGNAL(clicked()), newCarWindow, SLOT(close()));
-	connect(newCarSaveButton, SIGNAL(clicked()), this, SLOT(hideRow(2)));
+    connect(newCarSaveButton, SIGNAL(clicked()), this, SLOT(hideRow(2)));
 
     newCarLayout = new QVBoxLayout(newCarWindow);
     newCarLayout->addLayout(registrationLayout);
@@ -206,41 +206,41 @@ void DBViewer::newCar()
 void DBViewer::newCarSave()
 {
     if (registrationLine->text().remove("-").isEmpty())
-	{
+    {
         QMessageBox::warning(newCarWindow, tr("Erro"),
-			tr("Tem de introduzir uma matrícula"), QMessageBox::Ok);
+            tr("Tem de introduzir uma matrícula"), QMessageBox::Ok);
         return;
-	}
+    }
     if (ownerLine->text().isEmpty())
-	{
+    {
         QMessageBox::warning(newCarWindow, tr("Erro"),
-			tr("Tem de introduzir o nome do proprietário"), QMessageBox::Ok);
+            tr("Tem de introduzir o nome do proprietário"), QMessageBox::Ok);
         return;
-	}
+    }
     if (colorLine->text().isEmpty())
-	{
+    {
         QMessageBox::warning(newCarWindow, tr("Erro"),
-			tr("Tem de introduzir uma cor"), QMessageBox::Ok);
+            tr("Tem de introduzir uma cor"), QMessageBox::Ok);
         return;
-	}
+    }
     if (yearSpinBox->text().isEmpty())
-	{
+    {
         QMessageBox::warning(newCarWindow, tr("Erro"),
-			tr("Tem de introduzir o ano de compra do automóvel"), QMessageBox::Ok);
+            tr("Tem de introduzir o ano de compra do automóvel"), QMessageBox::Ok);
         return;
-	}
+    }
     if (brandComboBox->currentText().isEmpty())
-	{
+    {
         QMessageBox::warning(newCarWindow, tr("Erro"),
-			tr("Tem de introduzir a marca do automóvel"), QMessageBox::Ok);
+            tr("Tem de introduzir a marca do automóvel"), QMessageBox::Ok);
         return;
-	}
+    }
     if (modelLine->text().isEmpty())
-	{
+    {
         QMessageBox::warning(newCarWindow, tr("Erro"),
-			tr("Tem de introduzir o modelo do automóvel"), QMessageBox::Ok);
+            tr("Tem de introduzir o modelo do automóvel"), QMessageBox::Ok);
         return;
-	}
+    }
 
     QSqlQuery query;
     if (query.exec(tr(
@@ -254,22 +254,22 @@ void DBViewer::newCarSave()
         .arg(modelLine->text())                    // 6
         .arg(warningsLine->text())))               // 7
     {
-		QMessageBox::information(newCarWindow, tr("Sucesso"),
-			tr("Registo de automóvel adicionado."), QMessageBox::Ok);
-		newCarReset();
-	}
-	else
-		QMessageBox::critical(newCarWindow, tr("Erro"),
-		tr("Occoreu um erro:</br> %1").arg(query.lastError().text()), QMessageBox::Cancel);
+        QMessageBox::information(newCarWindow, tr("Sucesso"),
+            tr("Registo de automóvel adicionado."), QMessageBox::Ok);
+        newCarReset();
+    }
+    else
+        QMessageBox::critical(newCarWindow, tr("Erro"),
+        tr("Occoreu um erro:</br> %1").arg(query.lastError().text()), QMessageBox::Cancel);
 }
 
 void DBViewer::newCarReset()
 {
-	registrationLine->setText("");
-	ownerLine->setText("");
-	colorLine->setText("");
-	yearSpinBox->setValue(2011);
-	brandComboBox->setCurrentIndex(0);
-	modelLine->setText("");
-	warningsLine->setText("");
+    registrationLine->setText("");
+    ownerLine->setText("");
+    colorLine->setText("");
+    yearSpinBox->setValue(2011);
+    brandComboBox->setCurrentIndex(0);
+    modelLine->setText("");
+    warningsLine->setText("");
 }

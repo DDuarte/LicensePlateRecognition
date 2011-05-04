@@ -271,7 +271,7 @@ void MainWindow::createLayouts()
 
 void MainWindow::importImage()
 {
-	stop();
+    stop();
     QString fileName;
     fileName = QFileDialog::getOpenFileName(camLabel, tr("Carregar"), loadPath,
         tr("Imagens (*.png *.jpg *.gif *.tiff)"));
@@ -287,7 +287,7 @@ void MainWindow::importImage()
 
 void MainWindow::importCam()
 {
-	stop();
+    stop();
     if(!mCameraRunning)
     {
         QTime t;
@@ -524,11 +524,11 @@ void MainWindow::start()
 
 void MainWindow::stop()
 {
-	if (mCameraRunning && mCap.isOpened())
-	{
-		mCap.release();
-		mCameraRunning = false;
-	}
+    if (mCameraRunning && mCap.isOpened())
+    {
+        mCap.release();
+        mCameraRunning = false;
+    }
 
     QPixmap *nullPixmap;
     nullPixmap = new QPixmap(0,0);
@@ -677,13 +677,13 @@ void MainWindow::refreshDBSettings()
     {
          dbStatus->setPixmap(QPixmap(":/images/wrong.png"));
          dbStatus->setToolTip(tr("Não conectado"));
-		 dbOpenee = false;
+         dbOpenee = false;
     }
     else
     {
          dbStatus->setPixmap(QPixmap(":images/correct.png"));
          dbStatus->setToolTip(tr("Conectado"));
-		 dbOpenee = true;
+         dbOpenee = true;
     }
 }
 
@@ -725,18 +725,18 @@ void MainWindow::clock()
     timer->start(1000);
     showTime();
 
-	if (!dbOpenee) // TODO this is not working (button goes grey even if db is open)
-	{
-		dbViewerAction->setDisabled(true);
-		dbViewerAction->setToolTip(
+    if (!dbOpenee) // TODO this is not working (button goes grey even if db is open)
+    {
+        dbViewerAction->setDisabled(true);
+        dbViewerAction->setToolTip(
             tr("Não foi possível ligar à base de dados. Por favor, altere a configuração."));
-	}
-	else
-	{
-		dbViewerAction->setDisabled(false);
-		dbViewerAction->setStatusTip(
+    }
+    else
+    {
+        dbViewerAction->setDisabled(false);
+        dbViewerAction->setStatusTip(
             tr("Mostra/adiciona/elimina os automóveis registados"));
-	}
+    }
 }
 
 void MainWindow::showTime()
