@@ -26,12 +26,12 @@
 #include <QSpacerItem>
 #include <QFile>
 #include <QTextStream>
+#include <time.h>
 #include "mainwindow.h"
-#include "time.h"
 #include "dbviewer.h"
-#include "connection.h"
+#include "../connection.h"
 
-#include "FastMatchTemplate.h"
+#include "../cv/FastMatchTemplate.h"
 #include <stdio.h>
 #include <time.h>
 

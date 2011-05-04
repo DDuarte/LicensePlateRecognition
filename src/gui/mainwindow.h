@@ -22,15 +22,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-
-
 #include <QMainWindow>
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <QTimer>
-
-
 
 class QLabel;
 class QGroupBox;
@@ -167,7 +163,6 @@ private:
     QTimer mCameraTimer;
     QTime *mTime;
     double mFPS;
-
 };
 
 #endif // MAINWINDOW_H

@@ -19,21 +19,12 @@
 ** 
 ****************************************************************************/
 
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#include "settings.h"
 
-#include <QWidget>
-
-class settingss : public QWidget
+settingss::settingss(QWidget *parent) :
+    QWidget(parent)
 {
-    Q_OBJECT
-public:
-    explicit settingss(QWidget *parent = 0);
+    QWidget *settingss = new QWidget;
+}
 
-signals:
-
-public slots:
-
-};
-
-#endif // SETTINGS_H
+// TODO move all the related settings methods from mainwindow.cpp to here

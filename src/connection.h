@@ -27,7 +27,7 @@ static bool dbOpenee = false; // global variable *cough* *cough*
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlError>
 #include <QMessageBox>
-#include "mainwindow.h"
+#include "gui/mainwindow.h"
 
 static bool createConnection()
 {
