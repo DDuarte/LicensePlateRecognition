@@ -1,14 +1,14 @@
-Reconhecimento Digital de MatrÌculas
+ÔªøReconhecimento Digital de Matr√≠culas
 ====================================
 
-__¡rea de Projecto - ESF - 12.∫ ano__
+__√Årea de Projecto - ESF - 12.¬∫ ano__
 
-Projecto com o objectivo de criar um *software* capaz de analisar uma imagem, vÌdeo ou *webcam* e identificar as matrÌculas automÛveis presentes.
-Posteriormente, È feito uma comparaÁ„o dessa informaÁ„o com uma base de dados.
+Projecto com o objectivo de criar um *software* capaz de analisar uma imagem, v√≠deo ou *webcam* e identificar as matr√≠culas autom√≥veis presentes.
+Posteriormente, √© feito uma compara√ß√£o dessa informa√ß√£o com uma base de dados.
 
-* [Qt](http://qt.nokia.com/): interface gr·fica
-* [OpenCV](http://opencv.willowgarage.com/wiki/): identificaÁ„o da matrÌcula
-* [Tessaract-ocr](http://code.google.com/p/tesseract-ocr/): an·lise de caracteres
+* [Qt](http://qt.nokia.com/): interface gr√°fica
+* [OpenCV](http://opencv.willowgarage.com/wiki/): identifica√ß√£o da matr√≠cula
+* [Tessaract-ocr](http://code.google.com/p/tesseract-ocr/): an√°lise de caracteres
 * [MySQL](http://www.mysql.com/): Base de dados
 
 2010/2011
