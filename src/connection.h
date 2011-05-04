@@ -1,4 +1,4 @@
-/****************************************************************************
+Ôªø/****************************************************************************
 ** RDM - Reconhecimento Digital de Matriculas
 ** Copyright (C) 2011  Duarte Duarte, Miguel Mendes
 ** 
@@ -42,9 +42,9 @@ static bool createConnection()
     db.setDatabaseName(MainWindow().dbName);
     bool ok = db.open();
     if (!ok) {
-        QMessageBox::critical(0, qApp->tr("N„o È possÌvel abrir a BD"),
-                              qApp->tr("N„o È possÌvel estabelecer uma conex„o ‡ base de dados\n"
-                                       "Por favor, altere as configuraÁıes."), QMessageBox::Ok);
+        QMessageBox::critical(0, qApp->tr("N√£o √© poss√≠vel abrir a BD"),
+                              qApp->tr("N√£o √© poss√≠vel estabelecer uma conex√£o √† base de dados\n"
+                                       "Por favor, altere as configura√ß√µes."), QMessageBox::Ok);
         return false;
     }
     else

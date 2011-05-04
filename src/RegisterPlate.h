@@ -1,4 +1,4 @@
-#ifndef _H_RegisterPlate
+Ôªø#ifndef _H_RegisterPlate
 #define _H_RegisterPlate
 
 namespace rdm {
@@ -15,11 +15,11 @@ namespace rdm {
         };
         enum Warnings
         {
-            PLATE_INVALID               = 0x00000001, // MatrÌcula inv·lida
-            PLATE_OUT_OF_CIRCULATION    = 0x00000002, // MatrÌcula fora de circulaÁ„o
-            PLATE_COLOR_MISMATCH        = 0x00000004, // Cor do automÛvel n„o coincide com registo
-            PLATE_STOLEN                = 0x00000008, // MatrÌcula na lista de automÛveis roubados
-            PLATE_NOT_AUTHORIZED        = 0x00000010, // AutomÛvel n„o autorizado
+            PLATE_INVALID               = 0x00000001, // Matr√≠cula inv√°lida
+            PLATE_OUT_OF_CIRCULATION    = 0x00000002, // Matr√≠cula fora de circula√ß√£o
+            PLATE_COLOR_MISMATCH        = 0x00000004, // Cor do autom√≥vel n√£o coincide com registo
+            PLATE_STOLEN                = 0x00000008, // Matr√≠cula na lista de autom√≥veis roubados
+            PLATE_NOT_AUTHORIZED        = 0x00000010, // Autom√≥vel n√£o autorizado
             PLATE_PLACEHOLDER_1         = 0x00000020,
             PLATE_PLACEHOLDER_2         = 0x00000040,
             PLATE_PLACEHOLDER_3         = 0x00000080,

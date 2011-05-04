@@ -1,4 +1,4 @@
-#include <iostream> // for Write && WriteLine (might want to remove later)
+Ôªø#include <iostream> // for Write && WriteLine (might want to remove later)
 #include "RegisterPlate.h"
 #include <string>
 #include <cctype> // for std::isdigit
@@ -160,19 +160,19 @@ std::string RegisterPlate::GetThirdBlock(std::string newPlate)
 
 bool RegisterPlate::ValidBlock(std::string block)
 {
-    // Se o tamanho da string for diferente de 2, n„o È v·lido
+    // Se o tamanho da string for diferente de 2, n√£o √© v√°lido
     if (block.size() != 2)
         return false;
 
-    // No caso do primeiro car·cter ser um digito:
-    // ser· v·lido se o segundo car·cter tambÈm for um digito.
+    // No caso do primeiro car√°cter ser um digito:
+    // ser√° v√°lido se o segundo car√°cter tamb√©m for um digito.
     if (std::isdigit(block[0]))
         if (std::isdigit(block[1]))
             return true;
         else
             return false;
-    // No caso do primeiro car·cter ser uma letra:
-    // ser· v·lido se o segundo car·cter tambÈm uma letra.
+    // No caso do primeiro car√°cter ser uma letra:
+    // ser√° v√°lido se o segundo car√°cter tamb√©m uma letra.
     else
         if (std::isdigit(block[1]))
             return false;
@@ -426,7 +426,7 @@ void RegisterPlate::SetStolen()
 
 void RegisterPlate::TryToValidate()
 {
-    // TODO mudar zeros (0) para Ûs (O) e vice-versa no caso da matrÌcula ser inv·lida
+    // TODO mudar zeros (0) para √≥s (O) e vice-versa no caso da matr√≠cula ser inv√°lida
     // etc
 }
 

@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 ** RDM - Reconhecimento Digital de Matriculas
 ** Copyright (C) 2011  Duarte Duarte, Miguel Mendes
 **
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     QApplication::setStyle(new QPlastiqueStyle);
     splash->setPixmap(QPixmap(":/images/splash.png"));
     splash->show();
-    splash->showMessage(QObject::tr("A ligar � base de dados"), Qt::AlignRight | Qt::AlignTop, Qt::white);
+    splash->showMessage(QObject::tr("A ligar à base de dados"), Qt::AlignRight | Qt::AlignTop, Qt::white);
     createConnection();
     splash->showMessage(QObject::tr("A iniciar o programa..."), Qt::AlignRight | Qt::AlignTop, Qt::white);
     MainWindow w;

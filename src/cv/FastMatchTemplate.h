@@ -1,4 +1,4 @@
-#ifndef FastMatchTemplate_h
+﻿#ifndef FastMatchTemplate_h
 #define FastMatchTemplate_h
 /***************************************************************************
  *            FastMatchTemplate.h
