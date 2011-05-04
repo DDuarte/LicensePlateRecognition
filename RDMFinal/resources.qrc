@@ -1,0 +1,26 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/icon.png</file>
+        <file>images/screenshot.png</file>
+        <file>images/about.png</file>
+        <file>images/image.png</file>
+        <file>images/start.png</file>
+        <file>images/settings.png</file>
+        <file>images/refresh.png</file>
+        <file>images/stop.png</file>
+        <file>images/splash.png</file>
+        <file>images/webcam.png</file>
+        <file>images/exit.png</file>
+        <file>images/video.png</file>
+        <file>images/load.png</file>
+        <file>images/plate.png</file>
+        <file>images/cancel.png</file>
+        <file>images/save.png</file>
+        <file>images/db.png</file>
+        <file>images/dbadd.png</file>
+        <file>images/dbdel.png</file>
+        <file>images/correct.png</file>
+        <file>images/wrong.png</file>
+        <file>images/help.png</file>
+    </qresource>
+</RCC>
