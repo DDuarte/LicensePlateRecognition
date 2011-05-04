@@ -138,6 +138,7 @@ xcopy /y $(SolutionDir)ocr\*.* $(SolutionDir)bin\</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="cv\FastMatchTemplate.cpp" />
+    <ClCompile Include="cv\iCV.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_dbviewer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -200,6 +201,7 @@ xcopy /y $(SolutionDir)ocr\*.* $(SolutionDir)bin\</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DQT_NO_DEBUG -DNDEBUG -D_WINDOWS -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_SQL_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT "-I." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtSql" "-I$(QTDIR)\include" "-Ic:\OpenCV2.2\include" "-I$(QTDIR)\include\ActiveQt" "-I.\release" "-Ic:\Qt\4.7.2\mkspecs\default" "-I." "-I." "-I."</Command>
     </CustomBuild>
+    <ClInclude Include="cv\iCV.h" />
     <ClInclude Include="RegisterPlate.h" />
     <ClInclude Include="connection.h" />
   </ItemGroup>

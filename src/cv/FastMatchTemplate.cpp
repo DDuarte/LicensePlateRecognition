@@ -287,7 +287,8 @@ DrawFoundTargets(Mat*                  image,
                  const vector<double>& confidencesList,
                  int                   red,
                  int                   green,
-                 int                   blue)
+                 int                   blue,
+                 int                   lineSize)
 {
     int numPoints = pointsList.size();
     for(int currPoint = 0; currPoint < numPoints; currPoint++)
@@ -312,6 +313,6 @@ DrawFoundTargets(Mat*                  image,
         bottomRight.x = point.x + size.width / 2;
         bottomRight.y = point.y + size.height / 2;
 
-        rectangle(*image, topLeft, bottomRight, CV_RGB(red, green, blue), 4);
+        rectangle(*image, topLeft, bottomRight, CV_RGB(red, green, blue), lineSize);
     }
 }

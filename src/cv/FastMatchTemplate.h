@@ -107,6 +107,7 @@ MultipleMaxLoc(const Mat& image,
     red - the red value (0-255)
     green - the green value (0-255)
     blue - the blue value (0-255)
+    lineSize - the thickness of the line
 */
 void
 DrawFoundTargets(Mat*                  image,
@@ -115,6 +116,7 @@ DrawFoundTargets(Mat*                  image,
                  const vector<double>& confidencesList,
                  int                   red   = 0,
                  int                   green = 255,
-                 int                   blue  = 0);
+                 int                   blue  = 0,
+                 int                   lineSize = 1);
 
 #endif
