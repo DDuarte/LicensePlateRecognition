@@ -20,25 +20,16 @@
 ****************************************************************************/
 
 #include <QtGui>
+#include <QtSql>
 #include <QTime>
 #include <QTimer>
 #include <QDateTime>
-#include <QSpacerItem>
 #include <QFile>
 #include <QTextStream>
-#include <time.h>
 #include "mainwindow.h"
 #include "dbviewer.h"
 #include "../connection.h"
-
 #include "../cv/FastMatchTemplate.h"
-#include <stdio.h>
-#include <time.h>
-
-#include "opencv2/core/core.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/imgproc/imgproc_c.h"
 
 MainWindow::MainWindow()
 {    
@@ -47,6 +38,7 @@ MainWindow::MainWindow()
     QWidget *centralW;
     centralW = new QWidget;
     setCentralWidget(centralW);
+
     createGroupBoxes();
     createLabels(); // Pixmaps
     createActions();
@@ -63,17 +55,23 @@ MainWindow::MainWindow()
     mCameraRunning = false;
 
     setWindowIcon(QIcon(":/images/icon.png"));
-    setWindowTitle(tr("Reconhecimento Digital de MatrÌculas - Vers„o 0.3"));
-    setStyleSheet("MainWindow { background-color: qlineargradient(spread:pad, x1:0.468055, y1:1, x2:0.482826, y2:0, stop:0 rgba(98, 206, 255, 255), stop:1 rgba(255, 255, 255, 255)); }"); //QMessageBox { background-color: rgb(255, 170, 0); }");
-    infoList->addItem((tr("InÌcio: %1 ms").arg(t.elapsed())));
+    setWindowTitle(tr("Reconhecimento Digital de Matr√≠culas - Vers√£o 0.3"));
+    setStyleSheet(
+        "MainWindow"
+        "{"
+            "background-color:"
+                "qlineargradient(spread:pad, x1:0.468055, y1:1, x2:0.482826, y2:0, stop:0 rgba(98, 206, 255, 255),"
+                "stop:1 rgba(255, 255, 255, 255));"
+        "}");
+    infoList->addItem((tr("In√≠cio: %1 ms").arg(t.elapsed())));
 }
 
 void MainWindow::createActions()
 {
-    takeScreenshotAction = new QAction(tr("Capturar ecr„"), this);
+    takeScreenshotAction = new QAction(tr("Capturar ecr√£"), this);
     takeScreenshotAction->setIcon(QIcon(":images/screenshot.png"));
     takeScreenshotAction->setShortcut(QKeySequence::Save); // Ctrl + S
-    takeScreenshotAction->setStatusTip(tr("Captura e guarda uma imagem da c‚mara"));
+    takeScreenshotAction->setStatusTip(tr("Captura e guarda uma imagem da c√¢mara"));
     takeScreenshotAction->setDisabled(true);
     connect(takeScreenshotAction, SIGNAL(triggered()), this, SLOT(takeScreenshot()));
 
@@ -83,48 +81,48 @@ void MainWindow::createActions()
     importImageAction->setStatusTip(tr("Carrega uma imagem para ser analisada"));
     connect(importImageAction, SIGNAL(triggered()), this, SLOT(importImage()));
 
-    importCamAction = new QAction(tr("C‚mara"), this);
+    importCamAction = new QAction(tr("C√¢mara"), this);
     importCamAction->setIcon(QIcon(":images/webcam.png"));
     importCamAction->setShortcut(QKeySequence::Back); // Backspace
-    importCamAction->setStatusTip(tr("Faz com que uma c‚mara de vÌdeo seja a fonte de vÌdeo"));
+    importCamAction->setStatusTip(tr("Faz com que uma c√¢mara de v√≠deo seja a fonte de v√≠deo"));
     connect(importCamAction, SIGNAL(triggered()), this, SLOT(importCam()));
 
-    importVideoAction = new QAction(tr("VÌdeo"), this);
+    importVideoAction = new QAction(tr("V√≠deo"), this);
     importVideoAction->setIcon(QIcon(":images/video.png"));
     importVideoAction->setShortcut(QKeySequence::Undo); // Ctrl + Z
-    importVideoAction->setStatusTip(tr("Carrega um vÌdeo para ser analisado"));
+    importVideoAction->setStatusTip(tr("Carrega um v√≠deo para ser analisado"));
     connect(importVideoAction, SIGNAL(triggered()), this, SLOT(importVideo()));
 
     startAction = new QAction(tr("Iniciar"), this);
     startAction->setIcon(QIcon(":/images/start.png"));
     startAction->setShortcut(QKeySequence::New); // Ctrl + N
-    startAction->setStatusTip(tr("Inicia a captura de vÌdeo ou imagem"));
+    startAction->setStatusTip(tr("Inicia a captura de v√≠deo ou imagem"));
     connect(startAction, SIGNAL(triggered()), this, SLOT(startChoose()));
 
     stopAction = new QAction(tr("Parar"), this);
     stopAction->setIcon(QIcon(":/images/stop.png"));
     stopAction->setShortcut(QKeySequence::Delete); // Delete
-    stopAction->setStatusTip(tr("Para a captura de vÌdeo ou imagem"));
+    stopAction->setStatusTip(tr("Para a captura de v√≠deo ou imagem"));
     stopAction->setDisabled(true);
     connect(stopAction, SIGNAL(triggered()), this, SLOT(stop()));
 
     refreshAction = new QAction(tr("Actualizar"), this);
     refreshAction->setIcon(QIcon(":/images/refresh.png"));
     refreshAction->setShortcut(QKeySequence::Refresh); // F5
-    refreshAction->setStatusTip(tr("Actualiza a captura de vÌdeo ou imagem"));
+    refreshAction->setStatusTip(tr("Actualiza a captura de v√≠deo ou imagem"));
     refreshAction->setDisabled(true);
     connect(refreshAction, SIGNAL(triggered()), this, SLOT(refresh()));
 
-    settingsAction = new QAction(tr("OpÁıes"), this);
+    settingsAction = new QAction(tr("Op√ß√µes"), this);
     settingsAction->setIcon(QIcon(":/images/settings.png"));
     settingsAction->setShortcut(QKeySequence::Find); // Ctrl + F
-    settingsAction->setStatusTip(tr("ConfiguraÁıes"));
+    settingsAction->setStatusTip(tr("Configura√ß√µes"));
     connect(settingsAction, SIGNAL(triggered()), this, SLOT(setSettings()));
 
-    aboutAction = new QAction(tr("Sobre nÛs..."), this);
+    aboutAction = new QAction(tr("Sobre n√≥s..."), this);
     aboutAction->setIcon(QIcon(":/images/about.png"));
     aboutAction->setShortcut(QKeySequence::HelpContents); // F1
-    aboutAction->setStatusTip(tr("Mostra informaÁıes sobre quem nÛs somos"));
+    aboutAction->setStatusTip(tr("Mostra informa√ß√µes sobre quem n√≥s somos"));
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
 
     exitAction = new QAction(tr("Sair"), this);
@@ -136,7 +134,7 @@ void MainWindow::createActions()
     dbViewerAction = new QAction(tr("Base de dados"), this);
     dbViewerAction->setIcon(QIcon(":/images/db.png"));
     dbViewerAction->setShortcut(QKeySequence::New); // Ctrl + N
-    dbViewerAction->setStatusTip(tr("Mostra/adiciona/elimina os automÛveis registados"));
+    dbViewerAction->setStatusTip(tr("Mostra/adiciona/elimina os autom√≥veis registados"));
     connect(dbViewerAction, SIGNAL(triggered()), this, SLOT(dbViewer()));
 
     helpAction = new QAction(tr("Ajuda"), this);
@@ -148,13 +146,13 @@ void MainWindow::createActions()
 
 void MainWindow::createGroupBoxes()
 {
-    camGroupBox = new QGroupBox(tr("VÌdeo/imagem ao vivo"), this);
+    camGroupBox = new QGroupBox(tr("V√≠deo/imagem ao vivo"), this);
     camGroupBox->setMinimumSize(300, 225);
     camGroupBox->setMaximumSize(1024, 768);
     camGroupBox->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    plateGroupBox = new QGroupBox(tr("⁄ltimo veÌculo detectado"), this);
-    listGroupBox = new QGroupBox(tr("Lista de veÌculos"), this);
-    infoGroupBox = new QGroupBox(QObject::tr("InformaÁıes tÈcnicas"), this);
+    plateGroupBox = new QGroupBox(tr("√öltimo ve√≠culo detectado"), this);
+    listGroupBox = new QGroupBox(tr("Lista de ve√≠culos"), this);
+    infoGroupBox = new QGroupBox(QObject::tr("Informa√ß√µes t√©cnicas"), this);
 }
 
 void MainWindow::createLabels()
@@ -165,7 +163,7 @@ void MainWindow::createLabels()
     camLabel->setAlignment(Qt::AlignCenter);
     camLabel->setScaledContents(true);
 
-    plateLabel = new QLabel(tr("Placa n„o encontrada"),plateGroupBox);
+    plateLabel = new QLabel(tr("Placa n√£o encontrada"),plateGroupBox);
     plateLabel->setScaledContents(false);
     plateLabel->setAlignment(Qt::AlignCenter);
 
@@ -204,26 +202,26 @@ void MainWindow::createToolBars()
 
 void MainWindow::createTables()
 {
-    plateTable = new QTableWidget(6,1,plateGroupBox);
+    plateTable = new QTableWidget(6, 1, plateGroupBox); // 6 rows x 1 column
     plateTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     plateTable->setSortingEnabled(false);
     plateTable->setShowGrid(false);
     plateTable->setGridStyle(Qt::SolidLine);
     QStringList plateRows;
     QStringList plateColumns;
-    plateRows << tr("MatrÌcula") << tr("Cor") << tr("Hora") << tr("Data") << tr("Avisos") << tr("N.∫ de passagens");
-    plateColumns << tr("AutomÛvel");
+    plateRows << tr("Matr√≠cula") << tr("Cor") << tr("Hora") << tr("Data") << tr("Avisos") << tr("N.¬∫ de passagens");
+    plateColumns << tr("Autom√≥vel");
     plateTable->setVerticalHeaderLabels(plateRows);
     plateTable->setHorizontalHeaderLabels(plateColumns);
     plateTable->resizeColumnsToContents();
 
-    listTable = new QTableWidget(0,5,listGroupBox);
+    listTable = new QTableWidget(0, 5, listGroupBox); // 5 column - empty table
     listTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     listTable->setSortingEnabled(false);
     listTable->setShowGrid(true);
     listTable->setGridStyle(Qt::SolidLine);
     QStringList listColumns;
-    listColumns << tr("Matricula") << tr("Cor") << tr("Hora") << tr("Data") << tr("Avisos");
+    listColumns << tr("Matr√≠cula") << tr("Cor") << tr("Hora") << tr("Data") << tr("Avisos");
     listTable->setHorizontalHeaderLabels(listColumns);
     listTable->resizeColumnsToContents();
     listTable->setAlternatingRowColors(true);
@@ -233,7 +231,7 @@ void MainWindow::createTables()
 void MainWindow::createList()
 {
     infoList = new QListWidget(infoGroupBox);
-    infoList->addItem(tr("Tempos de processamento:"));
+    infoList->addItem(tr("* Informa√ß√£o variada *"));
 }
 
 void MainWindow::createStatusBar()
@@ -275,12 +273,12 @@ void MainWindow::importImage()
 {
 	stop();
     QString fileName;
-    fileName = QFileDialog::getOpenFileName(camLabel, tr("Carregar"), loadPath, tr("Imagens (*.png *.jpg *.gif *.tiff)"));
+    fileName = QFileDialog::getOpenFileName(camLabel, tr("Carregar"), loadPath,
+        tr("Imagens (*.png *.jpg *.gif *.tiff)"));
     if (fileName.isEmpty())
         return;
     QTime t;
     t.start();
-    // mImage.release(); perhaps not needed
 
     tmpImg = cv::imread(fileName.toStdString());
     infoList->addItem(tr("Abrir imagem(%2): %1 ms").arg(t.elapsed()).arg(fileName));
@@ -290,14 +288,14 @@ void MainWindow::importImage()
 void MainWindow::importCam()
 {
 	stop();
-    if (!mCameraRunning)
+    if(!mCameraRunning)
     {
         QTime t;
         t.start();
         mCap.open(CV_CAP_ANY);
         if (!mCap.isOpened())
         {
-            QMessageBox::warning(this, tr("C‚mara n„o encontrada"), tr("N„o foi possÌvel ligar ‡ <i>webcam</i>."), QMessageBox::Ok);
+            QMessageBox::warning(this, tr("C√¢mara n√£o encontrada"), tr("N√£o foi poss√≠vel ligar √† <i>webcam</i>."), QMessageBox::Ok);
             return;
         }
 
@@ -308,7 +306,8 @@ void MainWindow::importCam()
         mCameraRunning = true;
         mCameraTimer.start(20);
         connect(&mCameraTimer, SIGNAL(timeout()), this, SLOT(camTimeout()));
-        infoList->addItem(tr("Abrir c‚mara: %1 ms").arg(t.elapsed()));
+        infoList->addItem(tr("Abrir c√¢mara: %1 ms").arg(t.elapsed()));
+
         stopAction->setEnabled(true);
         refreshAction->setEnabled(true);
         startAction->setDisabled(true);
@@ -316,53 +315,42 @@ void MainWindow::importCam()
         plateGroupBox->show();
         camLabel->show();
         takeScreenshotAction->setEnabled(true);
-
     }
-    else QMessageBox::warning(this, tr("Erro"), tr("C‚mara j· est· activada."), QMessageBox::Ok);
+    else
+        QMessageBox::warning(this, tr("Erro"), tr("C√¢mara j√° est√° activada."), QMessageBox::Ok);
 
 }
 
 void MainWindow::camTimeout()
 {
-    if( mCameraRunning && mCap.isOpened() )
+    if(mCameraRunning && mCap.isOpened())
     {
-            mCap >> mImageCam;
-
-            // ---> Calcolo e visualizzazione FPS
-            // int time = mTime.elapsed();
-            // mTime.restart();
-            //mFPS = (1.0/(double)time)*1000.0;
-            //QString str = QString( "<b>FPS:</b> %1" ).arg( mFPS );
-            //ui.fpsLabel->setText( str );
-            // <--- Calcolo e visualizzazione FPS
-
-            cvtColor( mImageCam, mImageCam, CV_BGR2RGB);
-
-            QImage tmp( (uchar*)mImageCam.data, mImageCam.cols, mImageCam.rows,
-                            mImageCam.step,
-                            QImage::Format_RGB888 );
-            camLabel->setPixmap( QPixmap::fromImage( tmp ) );
-        }
+        mCap >> mImageCam;
+        cvtColor( mImageCam, mImageCam, CV_BGR2RGB);
+        QImage tmp((uchar*)mImageCam.data, mImageCam.cols, mImageCam.rows,
+                        mImageCam.step, QImage::Format_RGB888);
+        camLabel->setPixmap(QPixmap::fromImage(tmp));
+    }
 }
 
 void MainWindow::importVideo()
 {
-
+    // TODO Implement it
 }
 
 void MainWindow::about()
 {
-    QMessageBox::about(this, tr("Sobre nÛs"),
-                       tr("<h2><i>RDM</i> - Reconhecimento Digital de MatrÌculas</h2>"
+    QMessageBox::about(this, tr("Sobre n√≥s"),
+                       tr("<h2><i>RDM</i> - Reconhecimento Digital de Matr√≠culas</h2>"
                           "<p>Copyright &copy; 2011 ESF"
                           "<hr>"
-                          "<p>¡rea de Projecto 12.∫ - CT4"
+                          "<p>√Årea de Projecto 12.¬∫ - CT4"
                           "<ul>"
                           "<li>Duarte Duarte</li>"
                           "<li>Miguel Mendes</li>"
                           "<li>Marian Giurca</li>"
                           "</ul>"
-                          "<p align=right><a href='http://esfundao.pt/'>Escola Secund·ria do Fund„o</a>"));
+                          "<p align=right><a href='http://esfundao.pt/'>Escola Secund√°ria do Fund√£o</a>"));
 }
 
 void MainWindow::help()
@@ -377,20 +365,25 @@ void MainWindow::help()
                                 "<li>Sed vulputate nisl eu neque rhoncus sed tempor lorem accumsan.</li>"
                                 "<li>In et felis eget metus dignissim iaculis.</li>"
                                 "</ol>"), QMessageBox::Ok);
+    // TODO use something else, not a message box
 }
 
 void MainWindow::takeScreenshot()
 {
     if(!camLabel->pixmap())
     {
-        QMessageBox::warning(this, tr("Fonte n„o encontrada"), tr("N„o foi possÌvel identificar a imagem ou vÌdeo."), QMessageBox::Ok);
+        QMessageBox::warning(this, tr("Fonte n√£o encontrada"), tr("N√£o foi poss√≠vel identificar a imagem ou v√≠deo."), QMessageBox::Ok);
         return;
     }
     QTime t;
     t.start();
+
     QString format = "png";
-    QString initialPath = QDir::currentPath() + tr("/temp.").arg(plate) + format; // might want to change "temp" to plate number later (use RegisterPlate)
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Guardar como..."), initialPath, tr("%1 Portable Network Graphics (*.%2);;Todos os ficheiros (*)").arg(format.toUpper()).arg(format));
+    QString initialPath = QDir::currentPath() + tr("/temp.").arg(plate) + format;
+    // might want to change "temp" to plate number later (use RegisterPlate)
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Guardar como..."),
+        initialPath,
+        tr("%1 Portable Network Graphics (*.%2);;Todos os ficheiros (*)").arg(format.toUpper()).arg(format));
     QPixmap(*camLabel->pixmap()).save(fileName, format.toAscii());
     qApp->beep();
     infoList->addItem(tr("Tirar screenshot: %1 ms").arg(t.elapsed()));
@@ -399,10 +392,11 @@ void MainWindow::takeScreenshot()
 void MainWindow::startChoose()
 {
     QMessageBox msgBox;
-    QPushButton *image = msgBox.addButton(tr("Imagem est·tica"), QMessageBox::ActionRole);
-    QPushButton *cam = msgBox.addButton(tr("C‚mara de vÌdeo"), QMessageBox::ActionRole);
-    QPushButton *video = msgBox.addButton(tr("Ficheiro de VÌdeo"), QMessageBox::ActionRole);
+    QPushButton *image = msgBox.addButton(tr("Imagem est√°tica"), QMessageBox::ActionRole);
+    QPushButton *cam = msgBox.addButton(tr("C√¢mara de V√≠deo"), QMessageBox::ActionRole);
+    QPushButton *video = msgBox.addButton(tr("Ficheiro de V√≠deo"), QMessageBox::ActionRole);
     QPushButton *cancel = msgBox.addButton(tr("Cancelar"), QMessageBox::RejectRole);
+
     image->setIcon(QIcon(":images/image.png"));
     cam->setIcon(QIcon(":images/webcam.png"));
     video->setIcon(QIcon(":images/video.png"));
@@ -412,16 +406,21 @@ void MainWindow::startChoose()
     msgBox.setWindowTitle(tr("Modo"));
     msgBox.setText(tr("Fonte de imagem"));
     msgBox.exec();
-    if (msgBox.clickedButton() == image) importImage();
-    else if (msgBox.clickedButton() == cam) importCam();
-    else if (msgBox.clickedButton() == video) importVideo();
-    else return;
+    if (msgBox.clickedButton() == image)
+        importImage();
+    else if (msgBox.clickedButton() == cam)
+        importCam();
+    else if (msgBox.clickedButton() == video)
+        importVideo();
+    else
+        return;
 }
 
 void MainWindow::start()
 {
     QTime t;
     t.start();
+
     stopAction->setEnabled(true);
     refreshAction->setEnabled(true);
     startAction->setDisabled(true);
@@ -554,10 +553,10 @@ void MainWindow::refresh()
 
 void MainWindow::setSettings()
 {
-    // TODO might move to new class
+    // TODO move to new class (settings.h, settings.cpp)
     settingsWindow = new QWidget(this, Qt::Dialog);
     settingsWindow->setWindowModality(Qt::WindowModal);
-    settingsWindow->setWindowTitle(tr("ConfiguraÁıes"));
+    settingsWindow->setWindowTitle(tr("Configura√ß√µes"));
 
     loadDirLabel = new QLabel(loadPath, settingsWindow);
     QPushButton *loadDirButton;
@@ -574,6 +573,7 @@ void MainWindow::setSettings()
     plateTemplatePathButton = new QPushButton(tr("Placa modelo"), settingsWindow);
     plateTemplatePathButton->setIcon(QIcon(":images/plate.png"));
     connect(plateTemplatePathButton, SIGNAL(clicked()), this, SLOT(setPlateTemplatePath()));
+
     QHBoxLayout *plateTemplateLayout;
     plateTemplateLayout = new QHBoxLayout;
     plateTemplateLayout->addWidget(plateTemplatePathButton);
@@ -589,6 +589,7 @@ void MainWindow::setSettings()
     typeComboBox = new QComboBox(settingsWindow);
     nameLineEdit = new QLineEdit(dbName, settingsWindow);
 
+    // Default settings
     if (dbUser.isEmpty()) userLineEdit->setText("root");
     if (dbPass.isEmpty()) passLineEdit->setText("");
     if (dbPort.isEmpty()) portSpinBox->setValue(3306);
@@ -599,7 +600,7 @@ void MainWindow::setSettings()
     passLineEdit->setEchoMode(QLineEdit::Password);
     portSpinBox->setRange(1,65535);
     portSpinBox->setValue(dbPort.toInt());
-    typeComboBox->addItem("MySQL");
+    typeComboBox->addItem("MySQL"); // Atm MySQL is the only DB supported
     typeComboBox->setCurrentIndex(0);
 
     QFormLayout *dbLayout;
@@ -672,16 +673,18 @@ void MainWindow::refreshDBSettings()
     dbType = settings.value("dbType").toString();
     dbName = settings.value("dbName").toString();
 
-    if (!createConnection()) {
+    if (!createConnection())
+    {
          dbStatus->setPixmap(QPixmap(":/images/wrong.png"));
-         dbStatus->setToolTip(tr("N„o conectado"));
+         dbStatus->setToolTip(tr("N√£o conectado"));
 		 dbOpenee = false;
-         }
-    else {
+    }
+    else
+    {
          dbStatus->setPixmap(QPixmap(":images/correct.png"));
          dbStatus->setToolTip(tr("Conectado"));
 		 dbOpenee = true;
-         }
+    }
 }
 
 void MainWindow::writeSettings()
@@ -699,7 +702,7 @@ void MainWindow::writeSettings()
 
     settingsWindow->close();
 
-    readSettings(); // apply settings without needing to restart the program
+    readSettings(); // Apply settings without needing to restart the program
 }
 
 void MainWindow::readSettings()
@@ -725,12 +728,14 @@ void MainWindow::clock()
 	if (!dbOpenee) // TODO this is not working (button goes grey even if db is open)
 	{
 		dbViewerAction->setDisabled(true);
-		dbViewerAction->setToolTip(tr("N„o foi possÌvel ligar ‡ base de dados. Por favor, altere a configuraÁ„o"));
+		dbViewerAction->setToolTip(
+            tr("N√£o foi poss√≠vel ligar √† base de dados. Por favor, altere a configura√ß√£o."));
 	}
 	else
 	{
 		dbViewerAction->setDisabled(false);
-		dbViewerAction->setStatusTip(tr("Mostra/adiciona/elimina os automÛveis registados"));
+		dbViewerAction->setStatusTip(
+            tr("Mostra/adiciona/elimina os autom√≥veis registados"));
 	}
 }
 
@@ -744,7 +749,8 @@ void MainWindow::showTime()
 void MainWindow::setLoadDirectory()
 {
      QFileDialog::Options options = QFileDialog::DontResolveSymlinks | QFileDialog::ShowDirsOnly;
-     QString directory = QFileDialog::getExistingDirectory(this, tr("Pasta para carregar imagens"), loadDirLabel->text(), options);
+     QString directory = QFileDialog::getExistingDirectory(this,
+         tr("Pasta para carregar imagens"), loadDirLabel->text(), options);
      if (!directory.isEmpty())
          loadDirLabel->setText(directory);
 }
@@ -753,7 +759,9 @@ void MainWindow::setPlateTemplatePath()
 {
     QFileDialog::Options options;
     QString selectedFilter;
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Placa modelo"), plateTemplatePathLabel->text(), tr("Imagems (*.png) (*.jpg)"), &selectedFilter, options);
+    QString fileName = QFileDialog::getOpenFileName(this,
+        tr("Placa modelo"), plateTemplatePathLabel->text(),
+        tr("Imagems (*.png) (*.jpg)"), &selectedFilter, options);
     if (!fileName.isEmpty())
         plateTemplatePathLabel->setText(fileName);
 }
@@ -802,9 +810,10 @@ void MainWindow::getPlateText()
 
 void MainWindow::lookupDB(QString plateText)
 {
-    // TODO replace by RegisterPlace class
+    // TODO replace by RegisterPlate class
     plate = plateText;
-    QSqlQuery *colorQ = new QSqlQuery(tr("SELECT color FROM plates WHERE registration = %1").arg(plateText));
+    QSqlQuery *colorQ = new QSqlQuery(
+        tr("SELECT `color` FROM `plates` WHERE `registration` = %1").arg(plateText));
     colorQ->exec();
 
     QTableWidgetItem *plate = new QTableWidgetItem(plateText);

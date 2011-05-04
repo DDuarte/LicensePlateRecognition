@@ -21,8 +21,9 @@
 
 #include <QtGui/QApplication>
 #include <QSplashScreen>
+#include <QPlastiqueStyle>
+
 #include "gui/mainwindow.h"
-#include "QPlastiqueStyle"
 #include "connection.h"
 
 int main(int argc, char *argv[])

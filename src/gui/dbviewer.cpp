@@ -18,16 +18,19 @@
 ** We are not to be held liable for any illegal use of this software.
 ** 
 ****************************************************************************/
+
 #include <QtGui>
-#include <QtSql/QSqlQuery>
-#include <QtGui/QSizePolicy>
+#include <QSqlTableModel>
+#include <QTableView>
+#include <QSqlQuery>
+#include <QSqlError>
+
 #include "dbviewer.h"
 
-DBViewer::DBViewer(QWidget *parent) :
-    QDialog(parent)
+DBViewer::DBViewer(QWidget *parent):
+	QDialog(parent)
 {
     setWindowTitle(tr("Base de dados"));
-    //setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     createUI();
 }
@@ -60,14 +63,14 @@ void DBViewer::createUI()
     model->setTable("plates");
     model->setEditStrategy(QSqlTableModel::OnFieldChange);
     model->select();
-    model->setHeaderData(0, Qt::Horizontal, tr("Matr韈ula"));
-    model->setHeaderData(1, Qt::Horizontal, tr("Propriet醨io"));
+    model->setHeaderData(0, Qt::Horizontal, tr("Matr铆cula"));
+    model->setHeaderData(1, Qt::Horizontal, tr("Propriet谩rio"));
     model->setHeaderData(2, Qt::Horizontal, tr("Cor"));
     model->setHeaderData(3, Qt::Horizontal, tr("Ano de compra"));
     model->setHeaderData(4, Qt::Horizontal, tr("Marca"));
     model->setHeaderData(5, Qt::Horizontal, tr("Modelo"));
     model->setHeaderData(6, Qt::Horizontal, tr("Data de registo"));
-    model->setHeaderData(7, Qt::Horizontal, tr("Advert阯cia"));
+    model->setHeaderData(7, Qt::Horizontal, tr("Advert锚ncia"));
 
     QTableView *view = new QTableView(this);
     view->setModel(model);
@@ -75,7 +78,7 @@ void DBViewer::createUI()
     QPushButton *newCarButton = new QPushButton(tr("Novo Registo"), this);
     newCarButton->setIcon(QIcon(":/images/dbadd.png"));
     newCarButton->setShortcut(QKeySequence::New); // Ctrl + N
-    newCarButton->setStatusTip(tr("Registar um novo autom髒el na base de dados"));
+    newCarButton->setStatusTip(tr("Registar um novo autom贸vel na base de dados"));
     connect(newCarButton, SIGNAL(clicked()), this, SLOT(newCar()));
 
     QPushButton *delCarButton = new QPushButton(tr("Eliminar registo"), this);
@@ -104,10 +107,9 @@ void DBViewer::createUI()
 void DBViewer::newCar()
 {
     newCarWindow = new QWidget(this, Qt::Dialog);
-    //newCarWindow->setWindowModality(Qt::WindowModal);
     newCarWindow->setWindowTitle(tr("Novo registo"));
 
-    registrationLabel = new QLabel(tr("Matr韈ula"), newCarWindow);
+    registrationLabel = new QLabel(tr("Matr铆cula"), newCarWindow);
     registrationLine = new QLineEdit(newCarWindow);
     registrationLine->setMaxLength(6);
     registrationLine->setInputMask(">NN-NN-NN;_");
@@ -115,14 +117,14 @@ void DBViewer::newCar()
     registrationLayout->addWidget(registrationLabel);
     registrationLayout->addWidget(registrationLine);
 
-    ownerLabel = new QLabel(tr("Propriet醨io"), newCarWindow);
+    ownerLabel = new QLabel(tr("Propriet谩rio"), newCarWindow);
     ownerLine = new QLineEdit(newCarWindow);
     ownerLine->setPlaceholderText(tr("Nome"));
     ownerLayout = new QHBoxLayout;
     ownerLayout->addWidget(ownerLabel);
     ownerLayout->addWidget(ownerLine);
 
-    colorLabel = new QLabel(tr("Cor do autom髒el"), newCarWindow);
+    colorLabel = new QLabel(tr("Cor do autom贸vel"), newCarWindow);
     colorLine = new QLineEdit(newCarWindow);
     colorLine->setPlaceholderText(tr("Cor"));
     colorLayout = new QHBoxLayout;
@@ -141,7 +143,7 @@ void DBViewer::newCar()
 
     QStringList brands;
     brands << "Alfa Romeo" << "Aston Martin" << "Audi" << "BMW" << "Bentley"
-           << "Cadillac" << "Chevrolet" << "Chrysler" << "Citro雗" << "Daewoo"
+           << "Cadillac" << "Chevrolet" << "Chrysler" << "Citro毛n" << "Daewoo"
            << "Daihatsu" << "Dodge" << "Ferrari" << "Fiat" << "Ford" << "Laborghini"
            << "Honda" << "Hyundai" << "Isuzu" << "Jaguar" << "Jeep" << "Kia"
            << "Land Rover" << "Lexus" << "Lotus" << "MG" << "MINI" << "Maserati"
@@ -150,7 +152,7 @@ void DBViewer::newCar()
            << "Saab" << "Seat" << "Skoda" << "Smart" << "Ssangyong" << "Subaru"
            << "Suzuki" << "Toyota" << "Vauxhall" << "Volkswagen" << "Volvo"
            << "Outra marca...";
-    brandLabel = new QLabel(tr("Marca do autom髒el"), newCarWindow);
+    brandLabel = new QLabel(tr("Marca do autom贸vel"), newCarWindow);
     brandComboBox = new QComboBox(newCarWindow);
     brandComboBox->addItems(brands);
     brandComboBox->setEditable(true);
@@ -159,7 +161,7 @@ void DBViewer::newCar()
     brandLayout->addWidget(brandLabel);
     brandLayout->addWidget(brandComboBox);
 
-    modelLabel = new QLabel(tr("Modelo do autom髒el"), newCarWindow);
+    modelLabel = new QLabel(tr("Modelo do autom贸vel"), newCarWindow);
     modelLine = new QLineEdit(newCarWindow);
     modelLine->setPlaceholderText(tr("Modelo"));
     modelLayout = new QHBoxLayout;
@@ -203,35 +205,62 @@ void DBViewer::newCar()
 
 void DBViewer::newCarSave()
 {
-    if (registrationLine->text().remove("-").isEmpty()) {
-        QMessageBox::warning(newCarWindow, tr("Erro"), tr("Tem de introduzir uma matr韈ula"), QMessageBox::Ok);
-        return; }
-    if (ownerLine->text().isEmpty()) {
-        QMessageBox::warning(newCarWindow, tr("Erro"), tr("Tem de introduzir o nome do propriet醨io"), QMessageBox::Ok);
-        return; }
-    if (colorLine->text().isEmpty()) {
-        QMessageBox::warning(newCarWindow, tr("Erro"), tr("Tem de introduzir uma cor"), QMessageBox::Ok);
-        return; }
-    if (yearSpinBox->text().isEmpty()) {
-        QMessageBox::warning(newCarWindow, tr("Erro"), tr("Tem de introduzir o ano de compra do autom髒el"), QMessageBox::Ok);
-        return; }
-    if (brandComboBox->currentText().isEmpty()) {
-        QMessageBox::warning(newCarWindow, tr("Erro"), tr("Tem de introduzir a marca do autom髒el"), QMessageBox::Ok);
-        return; }
-    if (modelLine->text().isEmpty()) {
-        QMessageBox::warning(newCarWindow, tr("Erro"), tr("Tem de introduzir o modelo do autom髒el"), QMessageBox::Ok);
-        return; }
+    if (registrationLine->text().remove("-").isEmpty())
+	{
+        QMessageBox::warning(newCarWindow, tr("Erro"),
+			tr("Tem de introduzir uma matr铆cula"), QMessageBox::Ok);
+        return;
+	}
+    if (ownerLine->text().isEmpty())
+	{
+        QMessageBox::warning(newCarWindow, tr("Erro"),
+			tr("Tem de introduzir o nome do propriet谩rio"), QMessageBox::Ok);
+        return;
+	}
+    if (colorLine->text().isEmpty())
+	{
+        QMessageBox::warning(newCarWindow, tr("Erro"),
+			tr("Tem de introduzir uma cor"), QMessageBox::Ok);
+        return;
+	}
+    if (yearSpinBox->text().isEmpty())
+	{
+        QMessageBox::warning(newCarWindow, tr("Erro"),
+			tr("Tem de introduzir o ano de compra do autom贸vel"), QMessageBox::Ok);
+        return;
+	}
+    if (brandComboBox->currentText().isEmpty())
+	{
+        QMessageBox::warning(newCarWindow, tr("Erro"),
+			tr("Tem de introduzir a marca do autom贸vel"), QMessageBox::Ok);
+        return;
+	}
+    if (modelLine->text().isEmpty())
+	{
+        QMessageBox::warning(newCarWindow, tr("Erro"),
+			tr("Tem de introduzir o modelo do autom贸vel"), QMessageBox::Ok);
+        return;
+	}
 
     QSqlQuery query;
-    if (query.exec(tr("insert into plates (`registration`, `owner`, `color`, `year`, `brand`, `model`, `warnings`) values('%1', '%2', '%3', '%4', '%5', '%6', '%7');").arg(registrationLine->text().remove("-")).arg(ownerLine->text()).arg(colorLine->text()).arg(yearSpinBox->text()).arg(brandComboBox->currentText()).arg(modelLine->text()).arg(warningsLine->text())))
-	{
-		QMessageBox::information(newCarWindow, tr("Sucesso"), tr("Registo de autom髒el adicionado."), QMessageBox::Ok);
+    if (query.exec(tr(
+        "INSERT INTO `plates` (`registration`, `owner`, `color`, `year`, `brand`, `model`, `warnings`) VALUES "
+        "('%1', '%2', '%3', '%4', '%5', '%6', '%7');")
+        .arg(registrationLine->text().remove("-")) // 1
+        .arg(ownerLine->text())                    // 2
+        .arg(colorLine->text())                    // 3
+        .arg(yearSpinBox->text())                  // 4
+        .arg(brandComboBox->currentText())         // 5
+        .arg(modelLine->text())                    // 6
+        .arg(warningsLine->text())))               // 7
+    {
+		QMessageBox::information(newCarWindow, tr("Sucesso"),
+			tr("Registo de autom贸vel adicionado."), QMessageBox::Ok);
 		newCarReset();
 	}
 	else
-		QMessageBox::critical(newCarWindow, tr("Erro"), tr("Occoreu um erro:</br> %1").arg(query.lastError().text()), QMessageBox::Cancel);
-
-    
+		QMessageBox::critical(newCarWindow, tr("Erro"),
+		tr("Occoreu um erro:</br> %1").arg(query.lastError().text()), QMessageBox::Cancel);
 }
 
 void DBViewer::newCarReset()

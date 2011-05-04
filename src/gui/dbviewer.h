@@ -23,14 +23,17 @@
 #define DBVIEWER_H
 
 #include <QDialog>
-#include <QVBoxLayout>
-#include <QLineEdit>
-#include <QSpinBox>
-#include <QComboBox>
-#include <QtSql>
-#include <QtGui>
 
+class QVBoxLayout;
+class QHBoxLayout;
+class QLineEdit;
+class QSpinBox;
+class QComboBox;
+class QSqlTableModel;
+class QTableView;
 class QLabel;
+class QHBoxLayout;
+class QPushButton;
 
 class DBViewer : public QDialog
 {

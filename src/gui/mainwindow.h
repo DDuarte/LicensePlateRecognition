@@ -23,10 +23,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/highgui/highgui.hpp>
 #include <QTimer>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 class QLabel;
 class QGroupBox;
