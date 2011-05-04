@@ -1,4 +1,6 @@
-﻿/****************************************************************************
+﻿#ifndef SETTINGS_H
+#define SETTINGS_H
+/****************************************************************************
 ** RDM - Reconhecimento Digital de Matriculas
 ** Copyright (C) 2011  Duarte Duarte, Miguel Mendes
 ** 
@@ -18,9 +20,6 @@
 ** We are not to be held liable for any illegal use of this software.
 ** 
 ****************************************************************************/
-
-#ifndef SETTINGS_H
-#define SETTINGS_H
 
 #include <QWidget>
 
