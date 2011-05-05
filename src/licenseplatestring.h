@@ -108,8 +108,8 @@ namespace rdm {
         virtual bool operator == (const LicensePlateString& other) const;
         virtual bool operator != (const LicensePlateString& other) const;
 
-        virtual void Write(std::ostream& output = std::cout) const;
-        virtual void WriteLine(std::ostream& output = std::cout) const;
+        // virtual void Write(std::ostream& output = std::cout) const;
+        // virtual void WriteLine(std::ostream& output = std::cout) const;
 
         virtual bool IsValid() const;
         virtual bool IsStolen() const;

@@ -22,8 +22,6 @@
 #include <QtGui/QImage>
 #include <QDebug>
 
-#include <iostream>
-
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -66,7 +64,12 @@ namespace rdm
         int targetWidth = targetSize.width;
         int targetHeight = targetSize.height;
 
-        FastMatchTemplate(source, target, &foundPointsList, &confidencesList, confidenceMin, false);
+        if (!FastMatchTemplate(source, target, &foundPointsList, &confidencesList, confidenceMin, false))
+        {
+            qDebug() << "Plate not found";
+            return;
+            // TODO What happens if nothing is found? gui will probably crash
+        }
         fullImg = source;
         DrawFoundTargets(&fullImg, targetSize, foundPointsList, confidencesList, 255, 0, 0, 4);
 
@@ -103,40 +106,38 @@ namespace rdm
         this->target = target;
     }
 
-    void FindPlate::SetConfidenceMinium( int percentage )
+    void FindPlate::SetConfidenceMinium(int percentage /*= 20*/)
     {
         confidenceMin = percentage;
+    }
+
+    void FindPlate::SetPlateWidth(int width /*= 770*/)
+    {
+        plateWidth = width;
     }
 
     void FindPlate::Go()
     {
         if (source.empty())
         {
-            std::cout << "Source is empty, can't continue." << std::endl;
+            qDebug() << "Source is empty, can't continue.";
             return;
         }
         if (target.empty())
         {
-            std::cout << "Target is empty, can't continue." << std::endl;
+            qDebug() << "Target is empty, can't continue.";
             return;
         }
         if (!fullImg.empty())
-            std::cout << "fullImg is not empty" << std::endl;
+            qDebug() << "fullImg is not empty";
         if (!plateImg.empty())
-            std::cout << "plateImg is not empty" << std::endl;
+            qDebug() << "plateImg is not empty";
 
         Process();
         if (fullImg.empty())
-            std::cout << "ERROR: fullImg is empty after process" << std::endl;
+            qDebug() << "ERROR: fullImg is empty after process";
         if (plateImg.empty())
-            std::cout << "ERROR: plateImg is empty after process" << std::endl;
+            qDebug() << "ERROR: plateImg is empty after process";
     }
-
-    void FindPlate::SetPlateWidth( int width /*= 770*/ )
-    {
-        plateWidth = width;
-    }
-
-
 
 }

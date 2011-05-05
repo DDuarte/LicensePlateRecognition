@@ -19,7 +19,6 @@
 **
 ****************************************************************************/
 
-#include <iostream> // for Write && WriteLine (might want to remove later)
 #include <string>
 #include <cctype> // for std::isdigit
 #include <algorithm> // for std::transform
@@ -139,7 +138,7 @@ namespace rdm
         return ! operator == (other);
     }
     
-    void LicensePlateString::Write(std::ostream& output /*= std::cout*/) const
+    /* void LicensePlateString::Write(std::ostream& output /*= std::cout*\/) const
     {
         char s = Separator();
         if (s == 0)
@@ -152,11 +151,11 @@ namespace rdm
             + GetPlate().substr(4,2);
     }
     
-    void LicensePlateString::WriteLine(std::ostream& output /*= std::cout*/) const
+    void LicensePlateString::WriteLine(std::ostream& output /*= std::cout*\/) const
     {
         Write(output);
         output << std::endl;
-    }
+    } */
     
     bool LicensePlateString::IsValid() const
     {
