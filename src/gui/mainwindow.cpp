@@ -26,10 +26,14 @@
 #include <QDateTime>
 #include <QFile>
 #include <QTextStream>
+
 #include "mainwindow.h"
 #include "dbviewer.h"
 #include "../connection.h"
-#include "../cv/FastMatchTemplate.h"
+#include "../cv/FindPlate.h"
+
+#include "opencv2/imgproc/imgproc.hpp" // still needed for outdated cam processing
+                                 // it will be removed soon
 
 MainWindow::MainWindow()
 {    
@@ -169,7 +173,7 @@ void MainWindow::createLabels()
 
     clockLabel = new QLabel(infoGroupBox);
 
-    if(!camLabel->pixmap() || !plateLabel->pixmap()) {
+    if (!camLabel->pixmap() || !plateLabel->pixmap()) {
             plateGroupBox->hide();
             camGroupBox->hide();
         } // Fixme: find me a better place to live
@@ -272,23 +276,17 @@ void MainWindow::createLayouts()
 void MainWindow::importImage()
 {
     stop();
-    QString fileName;
     fileName = QFileDialog::getOpenFileName(camLabel, tr("Carregar"), loadPath,
         tr("Imagens (*.png *.jpg *.gif *.tiff)"));
     if (fileName.isEmpty())
         return;
-    QTime t;
-    t.start();
-
-    tmpImg = cv::imread(fileName.toStdString());
-    infoList->addItem(tr("Abrir imagem(%2): %1 ms").arg(t.elapsed()).arg(fileName));
-    start();
+    startImage();
 }
 
 void MainWindow::importCam()
 {
     stop();
-    if(!mCameraRunning)
+    if (!mCameraRunning)
     {
         QTime t;
         t.start();
@@ -308,13 +306,7 @@ void MainWindow::importCam()
         connect(&mCameraTimer, SIGNAL(timeout()), this, SLOT(camTimeout()));
         infoList->addItem(tr("Abrir câmara: %1 ms").arg(t.elapsed()));
 
-        stopAction->setEnabled(true);
-        refreshAction->setEnabled(true);
-        startAction->setDisabled(true);
-        camGroupBox->show();
-        plateGroupBox->show();
-        camLabel->show();
-        takeScreenshotAction->setEnabled(true);
+        enableDisplay();
     }
     else
         QMessageBox::warning(this, tr("Erro"), tr("Câmara já está activada."), QMessageBox::Ok);
@@ -323,7 +315,7 @@ void MainWindow::importCam()
 
 void MainWindow::camTimeout()
 {
-    if(mCameraRunning && mCap.isOpened())
+    if (mCameraRunning && mCap.isOpened())
     {
         mCap >> mImageCam;
         cvtColor( mImageCam, mImageCam, CV_BGR2RGB);
@@ -368,27 +360,6 @@ void MainWindow::help()
     // TODO use something else, not a message box
 }
 
-void MainWindow::takeScreenshot()
-{
-    if(!camLabel->pixmap())
-    {
-        QMessageBox::warning(this, tr("Fonte não encontrada"), tr("Não foi possível identificar a imagem ou vídeo."), QMessageBox::Ok);
-        return;
-    }
-    QTime t;
-    t.start();
-
-    QString format = "png";
-    QString initialPath = QDir::currentPath() + tr("/temp.").arg(plate) + format;
-    // might want to change "temp" to plate number later (use RegisterPlate)
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Guardar como..."),
-        initialPath,
-        tr("%1 Portable Network Graphics (*.%2);;Todos os ficheiros (*)").arg(format.toUpper()).arg(format));
-    QPixmap(*camLabel->pixmap()).save(fileName, format.toAscii());
-    qApp->beep();
-    infoList->addItem(tr("Tirar screenshot: %1 ms").arg(t.elapsed()));
-}
-
 void MainWindow::startChoose()
 {
     QMessageBox msgBox;
@@ -416,11 +387,29 @@ void MainWindow::startChoose()
         return;
 }
 
-void MainWindow::start()
+void MainWindow::takeScreenshot()
 {
+    if (!camLabel->pixmap())
+    {
+        QMessageBox::warning(this, tr("Fonte não encontrada"), tr("Não foi possível identificar a imagem ou vídeo."), QMessageBox::Ok);
+        return;
+    }
     QTime t;
     t.start();
 
+    QString format = "png";
+    QString initialPath = QDir::currentPath() + tr("/temp.").arg(plate) + format;
+    // might want to change "temp" to plate number later (use RegisterPlate)
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Guardar como..."),
+        initialPath,
+        tr("%1 Portable Network Graphics (*.%2);;Todos os ficheiros (*)").arg(format.toUpper()).arg(format));
+    QPixmap(*camLabel->pixmap()).save(fileName, format.toAscii());
+    qApp->beep();
+    infoList->addItem(tr("Tirar screenshot: %1 ms").arg(t.elapsed()));
+}
+
+void MainWindow::enableDisplay()
+{
     stopAction->setEnabled(true);
     refreshAction->setEnabled(true);
     startAction->setDisabled(true);
@@ -428,94 +417,40 @@ void MainWindow::start()
     plateGroupBox->show();
     camLabel->show();
     takeScreenshotAction->setEnabled(true);
+}
 
-    /*IplImage img = tmpImg;
-    temp = cvLoadImage(platePath.toLatin1(),1);
-    img_width = img.width;
-    img_height = img.height;
-    temp_width = temp->width;
-    temp_height = temp->height;
-    fin_width = img_width - temp_width + 1;
-    fin_height = img_height - temp_height + 1;
-    fin = cvCreateImage(cvSize(fin_width,fin_height),IPL_DEPTH_32F,1);
+void MainWindow::disableDisplay()
+{
+    stopAction->setEnabled(false);
+    refreshAction->setEnabled(false);
+    startAction->setDisabled(false);
+    camGroupBox->hide();
+    plateGroupBox->hide();
+    camLabel->hide();
+    takeScreenshotAction->setEnabled(false);
+}
 
-    // TODO Change from match template to something else PLEASE (consumes 8 seconds in image processing)
-    cvMatchTemplate(&img,temp,fin,CV_TM_SQDIFF );
-    cvMinMaxLoc(fin,&minval,&maxval,&minloc,&maxloc,0);
-    cvRectangle(&img,cvPoint(minloc.x + temp_width,minloc.y),cvPoint(minloc.x + temp_width + 800,minloc.y + temp_height),cvScalar(0,0,255,0),3,0,0);
-    cvSetImageROI(&img, cvRect(minloc.x + temp_width,minloc.y,800,temp_height));
-    
-    sub = cvCreateImage(cvSize(800,temp->height),temp->depth,temp->nChannels);
-    cvCopy(&img,sub,NULL);
-    cvResetImageROI(&img);
-    cv::cvtColor(tmpImg,mImage,CV_BGR2RGB);
-    cv::cvtColor(sub,mImage2,CV_BGR2RGB);*/
+void MainWindow::startImage()
+{
+    QTime t;
+    t.start();
 
+    cv::Mat source = cv::imread(fileName.toStdString());
+    cv::Mat target = cv::imread(platePath.toStdString());
 
-    /*cvSetImageROI(img, cvRect(minloc.x + temp_width, minloc.y, 267, temp_height));
-    plate1 = cvCreateImage(cvSize(267,temp_height),img->depth,img->nChannels);
-    cvCopy(img,plate1,NULL);
-    cvResetImageROI(img);
-    cvSaveImage("bloco1.JPG",plate1);
-    qDebug() << "Primeiro bloco: Sucesso";
+    rdm::FindPlate a(source);
+    a.SetTarget(target);
+    a.SetPlateWidth(770);
+    a.SetConfidenceMinium(50);
 
-    cvSetImageROI(img, cvRect(minloc.x + temp_width + 267, minloc.y, 267, temp_height));
-    plate2 = cvCreateImage(cvSize(267,temp_height),img->depth,img->nChannels);
-    cvCopy(img,plate2,NULL);
-    cvResetImageROI(img);
-    cvSaveImage("bloco2.JPG",plate2);
-    qDebug() << "Segundo bloco: Sucesso";
+    a.Go();
 
-    cvSetImageROI(img, cvRect(minloc.x + temp_width + 534, minloc.y, 267, temp_height));
-    plate3 = cvCreateImage(cvSize(267,temp_height),img->depth,img->nChannels);
-    cvCopy(img,plate3,NULL);
-    cvResetImageROI(img);
-    cvSaveImage("bloco3.JPG",plate3);
-    qDebug() << "Terceiro bloco: Sucesso"; */
+    QImage fullImage = a.GetQImageFromMat(a.ConvertToRGB(a.GetFullImage()));
+    camLabel->setPixmap(QPixmap::fromImage(fullImage)); // full image
+    QImage plateImage = a.GetQImageFromMat(a.GetPlateImage());
+    plateLabel->setPixmap(QPixmap::fromImage(plateImage)); // plate image
 
-    
-    cv::Mat source = tmpImg;
-    cv::Mat target = cvLoadImage(platePath.toLatin1(),1);
-
-    cv::vector<cv::Point> foundPointsList;
-    cv::vector<double> confidencesList;
-
-    QTime t2;
-    t2.start();
-    if(!FastMatchTemplate(source, target, &foundPointsList, &confidencesList, 10, false))
-    {
-        qDebug() << "ERROR: Fast match template failed.";
-        stop();
-        return;
-    }
-    infoList->addItem(tr("FastMatchTemplate: %1 ms").arg(t2.elapsed()));
-
-    cv::Mat colorImage;
-
-    colorImage = source.clone();
-
-    DrawFoundTargets(&colorImage, target.size(), foundPointsList, confidencesList);
-
-    IplImage sourceIpl = source;
-    int targetHeight = target.size().height;
-
-    CvRect rectPlaca = cvRect(foundPointsList[0].x + 10 + target.size().width / 2,
-        foundPointsList[0].y - target.size().height / 2,
-        770, targetHeight);
-    cvSetImageROI(&sourceIpl, rectPlaca);
-
-    sub = cvCreateImage(cvSize(rectPlaca.width, rectPlaca.height), sourceIpl.depth, sourceIpl.nChannels); // TODO Crash
-    cvCopy(&sourceIpl,sub);
-    cvResetImageROI(&sourceIpl);
-    cv::cvtColor(sub,mImage2,CV_BGR2RGB);
-
-    cv::Mat mImage;
-    cv::cvtColor(colorImage,mImage,CV_BGR2RGB);
-    
-    QImage tmp((uchar*)mImage.data, mImage.cols, mImage.rows, mImage.step, QImage::Format_RGB888);
-    camLabel->setPixmap(QPixmap::fromImage(tmp)); // full image
-    QImage tmp2((uchar*)mImage2.data, mImage2.cols, mImage2.rows, mImage2.step, QImage::Format_RGB888);
-    plateLabel->setPixmap(QPixmap::fromImage(tmp2)); // plate only
+    enableDisplay();
 
     infoList->addItem(tr("Processar imagem: %1 ms").arg(t.elapsed()));
     
@@ -547,7 +482,7 @@ void MainWindow::stop()
 void MainWindow::refresh()
 {
     stop();
-    start();
+    startImage();
     // :P
 }
 

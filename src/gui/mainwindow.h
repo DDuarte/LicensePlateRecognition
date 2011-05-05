@@ -62,7 +62,7 @@ private slots:
     void importImage();
     void importCam();
     void importVideo();
-    void start();
+    void startImage();
     void startChoose();
     void stop();
     void refresh();
@@ -90,12 +90,15 @@ private:
     void createLayouts();
     void readSettings();
     void OCR();
+    void enableDisplay();
+    void disableDisplay();
 
     void lookupDB(QString plateText); // TODO replace by RegisterPlate class
 
     void clock();
 
     QString plate;
+    QString fileName;
 
     QAction *takeScreenshotAction;
     QAction *importImageAction;
