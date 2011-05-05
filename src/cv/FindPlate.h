@@ -1,5 +1,5 @@
-#ifndef ICV_H
-#define ICV_H
+#ifndef FINDPLATE_H
+#define FINDPLATE_H
 /****************************************************************************
 ** RDM - Reconhecimento Digital de Matriculas
 ** Copyright (C) 2011  Duarte Duarte, Miguel Mendes
@@ -21,31 +21,44 @@
 **
 ****************************************************************************/
 
-namespace rdm {
+namespace rdm
+{
 
-    class iCV
+    class FindPlate
     {
     private:
-        cv::vector<cv::Point> foundPointsList; // Points found list
-        cv::vector<double> confidencesList; // Percentage of matches list
         cv::Mat source;
-        cv::Mat sourceClone;
         cv::Mat target;
-        cv::Mat plate;
-    
+        cv::Mat fullImg;
+        cv::Mat plateImg;
+        cv::vector<cv::Point> foundPointsList;
+        cv::vector<double> confidencesList;
+        int confidenceMin;
+        int plateWidth;
+        
     public:
-        iCV(cv::Mat& source, cv::Mat& target, cv::Mat& fullImg, cv::Mat& plateImg, QImage& qFull, QImage& qPlate);
-        virtual ~iCV();
-    
-    protected:
-        virtual void Match();
-        virtual void Draw();
-        virtual void Plate();
-    
-        static QImage MatToQImage(cv::Mat mat);
-        static void ConvertToRGB(cv::Mat& src, cv::Mat& targ);
+        FindPlate();
+        explicit FindPlate(cv::Mat source);
+        virtual ~FindPlate();
+
+        virtual void Go();
+
+        virtual cv::Mat GetFullImage() const;
+        virtual cv::Mat GetPlateImage() const;
+        virtual cv::vector<cv::Point> GetFoundPointsList() const; // Points found list
+        virtual cv::vector<double> GetConfidencesList() const; // Percentage of matches list
+        
+        virtual void SetTarget(cv::Mat target);
+        virtual void SetConfidenceMinium(int percentage = 20);
+        virtual void SetPlateWidth(int width = 770);
+    public: // static
+        static QImage GetQImageFromMat(cv::Mat img);
+        static cv::Mat ConvertToRGB(cv::Mat img);
+    private:
+        virtual void Process();
     };
 
 }
 
-#endif // ICV_H
+#endif // FINDPLATE_H
+

@@ -69,7 +69,7 @@
     <ClCompile Include="cv\FastMatchTemplate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cv\iCV.cpp">
+    <ClCompile Include="cv\FindPlate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,7 +83,7 @@
     <ClInclude Include="cv\FastMatchTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cv\iCV.h">
+    <ClInclude Include="cv\FindPlate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
