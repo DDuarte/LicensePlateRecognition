@@ -31,32 +31,32 @@
 #include <QString>
 #include <QDebug>
 
-#include "RegisterPlate.h"
+#include "licenseplatestring.h"
 
 namespace rdm
 {
 
-    RegisterPlate::RegisterPlate():
+    LicensePlateString::LicensePlateString():
         plate("00AA00")
     {
     }
     
-    RegisterPlate::RegisterPlate(std::string& plate):
+    LicensePlateString::LicensePlateString(std::string& plate):
         plate(plate)
     {
     }
     
-    RegisterPlate::RegisterPlate(std::string& a, std::string& b, std::string& c):
+    LicensePlateString::LicensePlateString(std::string& a, std::string& b, std::string& c):
         plate(a + b + c)
     {
     }
     
-    RegisterPlate::RegisterPlate(char* plate):
+    LicensePlateString::LicensePlateString(char* plate):
         plate(plate)
     {
     }
     
-    RegisterPlate::RegisterPlate(char a[], char b[], char c[])
+    LicensePlateString::LicensePlateString(char a[], char b[], char c[])
     {
         std::string str1 = a;
         std::string str2 = b;
@@ -64,82 +64,82 @@ namespace rdm
         plate = str1 + str2 + str3;
     }
     
-    RegisterPlate::~RegisterPlate()
+    LicensePlateString::~LicensePlateString()
     {
     }
     
-    std::string RegisterPlate::GetPlate() const
+    std::string LicensePlateString::GetPlate() const
     {
         return plate;
     }
     
-    std::string RegisterPlate::GetOwner() const
+    std::string LicensePlateString::GetOwner() const
     {
         return owner;
     }
-    std::string RegisterPlate::GetColor() const
+    std::string LicensePlateString::GetColor() const
     {
         return color;
     }
-    int RegisterPlate::GetYear() const
+    int LicensePlateString::GetYear() const
     {
         return year;
     }
-    std::string RegisterPlate::GetBrand() const
+    std::string LicensePlateString::GetBrand() const
     {
         return brand;
     }
-    std::string RegisterPlate::GetModel() const
+    std::string LicensePlateString::GetModel() const
     {
         return model;
     }
-    std::string RegisterPlate::GetRegistryTime() const
+    std::string LicensePlateString::GetRegistryTime() const
     {
         return registryTime;
     }
     
-    int RegisterPlate::GetWarnings() const
+    int LicensePlateString::GetWarnings() const
     {
         return warnings;
     }
     
-    std::string RegisterPlate::GetFirstBlock() const
+    std::string LicensePlateString::GetFirstBlock() const
     {
         return GetFirstBlock(GetPlate());
     }
     
-    std::string RegisterPlate::GetSecondBlock() const
+    std::string LicensePlateString::GetSecondBlock() const
     {
         return GetSecondBlock(GetPlate());
     }
     
-    std::string RegisterPlate::GetThirdBlock() const
+    std::string LicensePlateString::GetThirdBlock() const
     {
         return GetThirdBlock(GetPlate());
     }
     
-    void RegisterPlate::Copy(const RegisterPlate& other)
+    void LicensePlateString::Copy(const LicensePlateString& other)
     {
         plate = other.plate;
     }
     
-    RegisterPlate& RegisterPlate::operator = (const RegisterPlate& other)
+    LicensePlateString& LicensePlateString::operator = (const LicensePlateString& other)
     {
         Copy(other);
         return *this;
     }
     
-    bool RegisterPlate::operator == (const RegisterPlate& other) const
+    bool LicensePlateString::operator == (const LicensePlateString& other) const
     {
         return this->GetPlate() == other.GetPlate();
     }
     
-    bool RegisterPlate::operator != (const RegisterPlate& other) const
+    bool LicensePlateString::operator != (const LicensePlateString& other) const
     {
         return ! operator == (other);
     }
     
-    void RegisterPlate::Write(std::ostream& output /*= std::cout*/) const
+    void LicensePlateString::Write(std::ostream& output /*= std::cout*/) const
     {
         char s = Separator();
         if (s == 0)
@@ -152,33 +152,33 @@ namespace rdm
             + GetPlate().substr(4,2);
     }
     
-    void RegisterPlate::WriteLine(std::ostream& output /*= std::cout*/) const
+    void LicensePlateString::WriteLine(std::ostream& output /*= std::cout*/) const
     {
         Write(output);
         output << std::endl;
     }
     
-    bool RegisterPlate::IsValid() const
+    bool LicensePlateString::IsValid() const
     {
         return Valid(GetPlate()) && GetEpoch() != INVALID;
     }
     
-    std::string RegisterPlate::GetFirstBlock(std::string newPlate)
+    std::string LicensePlateString::GetFirstBlock(std::string newPlate)
     {
         return newPlate.substr(0, 2);
     }
     
-    std::string RegisterPlate::GetSecondBlock(std::string newPlate)
+    std::string LicensePlateString::GetSecondBlock(std::string newPlate)
     {
         return newPlate.substr(2, 2);
     }
     
-    std::string RegisterPlate::GetThirdBlock(std::string newPlate)
+    std::string LicensePlateString::GetThirdBlock(std::string newPlate)
     {
         return newPlate.substr(4, 2);
     }
     
-    bool RegisterPlate::ValidBlock(std::string block)
+    bool LicensePlateString::ValidBlock(std::string block)
     {
         // Se o tamanho da string for diferente de 2, não é válido
         if (block.size() != 2)
@@ -200,7 +200,7 @@ namespace rdm
                 return true;
     }
     
-    bool RegisterPlate::Valid(std::string plate)
+    bool LicensePlateString::Valid(std::string plate)
     {
         return plate.size() == 6
             && ValidBlock(GetFirstBlock(plate))
@@ -208,7 +208,7 @@ namespace rdm
             && ValidBlock(GetThirdBlock(plate));
     }
     
-    bool RegisterPlate::Valid(std::string a, std::string b, std::string c)
+    bool LicensePlateString::Valid(std::string a, std::string b, std::string c)
     {
         return a.size() == 2
             && b.size() == 2
@@ -218,7 +218,7 @@ namespace rdm
             && ValidBlock(c);
     }
     
-    void RegisterPlate::SetSeparator(char newSeparator)
+    void LicensePlateString::SetSeparator(char newSeparator)
     {
         if (newSeparator == 120) // x
             separator = 0;
@@ -226,17 +226,17 @@ namespace rdm
             separator = newSeparator;
     }
     
-    char RegisterPlate::Separator()
+    char LicensePlateString::Separator()
     {
         return separator;
     }
     
-    void RegisterPlate::ToUpper()
+    void LicensePlateString::ToUpper()
     {
         std::transform(plate.begin(), plate.end(), plate.begin(), ::toupper);
     }
     
-    RegisterPlate::EpochType RegisterPlate::GetEpoch() const
+    LicensePlateString::EpochType LicensePlateString::GetEpoch() const
     {
         std::string a = GetFirstBlock();
         std::string b = GetSecondBlock();
@@ -254,7 +254,7 @@ namespace rdm
             return INVALID;
     }
     
-    bool RegisterPlate::IsNumericBlock(std::string block)
+    bool LicensePlateString::IsNumericBlock(std::string block)
     {
         if (std::isdigit(block[0]) && std::isdigit(block[1]))
             return true;
@@ -264,9 +264,9 @@ namespace rdm
             return false;
     }
     
-    char RegisterPlate::separator = 0;
+    char LicensePlateString::separator = 0;
     
-    void RegisterPlate::RemoveNonAlphanumeric()
+    void LicensePlateString::RemoveNonAlphanumeric()
     {
         for (int i = 0; i < static_cast<int>(GetPlate().size()); i++)
             if (!(std::isalnum(plate[i]))) {
@@ -275,7 +275,7 @@ namespace rdm
             }
     }
     
-    bool RegisterPlate::DBConnectionCreate()
+    bool LicensePlateString::DBConnectionCreate()
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
         db.setHostName("localhost");
@@ -290,12 +290,12 @@ namespace rdm
         return true;
     }
     
-    void RegisterPlate::DBConnectionClose()
+    void LicensePlateString::DBConnectionClose()
     {
         QSqlDatabase().close();
     }
     
-    bool RegisterPlate::DBInfoLoad()
+    bool LicensePlateString::DBInfoLoad()
     {
         QSqlQuery query;
         query.prepare("SELECT `owner`,`color`,`year`,`brand`,`model`,`registryTime`,`warnings` FROM `plates` WHERE registration = :plate" );
@@ -328,7 +328,7 @@ namespace rdm
         return false;
     }
     
-    void RegisterPlate::DBInfoSave()
+    void LicensePlateString::DBInfoSave()
     {
         if (IsValid())
         {
@@ -362,47 +362,47 @@ namespace rdm
     
     }
     
-    void RegisterPlate::SetPlate(const std::string& otherPlate)
+    void LicensePlateString::SetPlate(const std::string& otherPlate)
     {
         plate = otherPlate;
     }
     
-    void RegisterPlate::SetOwner(const std::string& otherOwner)
+    void LicensePlateString::SetOwner(const std::string& otherOwner)
     {
         owner = otherOwner;
     }
     
-    void RegisterPlate::SetColor(const std::string& otherColor)
+    void LicensePlateString::SetColor(const std::string& otherColor)
     {
         color = otherColor;
     }
     
-    void RegisterPlate::SetYear(const int& otherYear)
+    void LicensePlateString::SetYear(const int& otherYear)
     {
         year = otherYear;
     }
     
-    void RegisterPlate::SetBrand(const std::string& otherBrand)
+    void LicensePlateString::SetBrand(const std::string& otherBrand)
     {
         brand = otherBrand;
     }
     
-    void RegisterPlate::SetModel(const std::string& otherModel)
+    void LicensePlateString::SetModel(const std::string& otherModel)
     {
         model = otherModel;
     }
     
-    void RegisterPlate::SetRegistryTime(const std::string& otherRegistryTime)
+    void LicensePlateString::SetRegistryTime(const std::string& otherRegistryTime)
     {
         registryTime = otherRegistryTime;
     }
     
-    void RegisterPlate::SetWarningsRaw(const int& otherWarnings)
+    void LicensePlateString::SetWarningsRaw(const int& otherWarnings)
     {
         warnings = otherWarnings;
     }
     
-    void RegisterPlate::SetWarnings()
+    void LicensePlateString::SetWarnings()
     {
         if (!IsValid())
             SetWarnings(PLATE_INVALID);
@@ -410,53 +410,53 @@ namespace rdm
             SetWarnings(PLATE_OUT_OF_CIRCULATION);
     }
     
-    void RegisterPlate::SetWarnings(const Warnings otherWarnings)
+    void LicensePlateString::SetWarnings(const Warnings otherWarnings)
     {
         warnings |= static_cast<int>(otherWarnings);
     }
     
-    void RegisterPlate::RemoveWarnings(const Warnings otherWarnings)
+    void LicensePlateString::RemoveWarnings(const Warnings otherWarnings)
     {
         warnings = warnings &~ static_cast<int>(otherWarnings);
     }
     
-    bool RegisterPlate::IsStolen() const
+    bool LicensePlateString::IsStolen() const
     {
         return GetWarnings() & PLATE_STOLEN; // TODO verify if it's correct
     }
     
-    bool RegisterPlate::IsOutOfCirculation() const
+    bool LicensePlateString::IsOutOfCirculation() const
     {
         return GetWarnings() & PLATE_OUT_OF_CIRCULATION;
     }
     
-    bool RegisterPlate::IsNotAuthorized() const
+    bool LicensePlateString::IsNotAuthorized() const
     {
         return GetWarnings() & PLATE_NOT_AUTHORIZED;
     }
     
-    bool RegisterPlate::IsColorMismatch() const
+    bool LicensePlateString::IsColorMismatch() const
     {
         return GetWarnings() & PLATE_COLOR_MISMATCH;
     }
     
-    void RegisterPlate::SetNotAutorized()
+    void LicensePlateString::SetNotAutorized()
     {
         SetWarnings(PLATE_NOT_AUTHORIZED);
     }
     
-    void RegisterPlate::SetStolen()
+    void LicensePlateString::SetStolen()
     {
         SetWarnings(PLATE_STOLEN);
     }
     
-    void RegisterPlate::TryToValidate()
+    void LicensePlateString::TryToValidate()
     {
         // TODO mudar zeros (0) para ós (O) e vice-versa no caso da matrícula ser inválida
         // etc
     }
     
-    void RegisterPlate::Normalize()
+    void LicensePlateString::Normalize()
     {
         this->RemoveNonAlphanumeric();
         this->ToUpper();

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -166,7 +166,7 @@ xcopy /y $(SolutionDir)ocr\*.* $(SolutionDir)bin\</Command>
     <ClCompile Include="gui\dbviewer.cpp" />
     <ClCompile Include="gui\mainwindow.cpp" />
     <ClCompile Include="gui\settings.cpp" />
-    <ClCompile Include="RegisterPlate.cpp" />
+    <ClCompile Include="licenseplatestring.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -202,7 +202,7 @@ xcopy /y $(SolutionDir)ocr\*.* $(SolutionDir)bin\</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DQT_NO_DEBUG -DNDEBUG -D_WINDOWS -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_SQL_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT "-I." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtSql" "-I$(QTDIR)\include" "-Ic:\OpenCV2.2\include" "-I$(QTDIR)\include\ActiveQt" "-I.\release" "-Ic:\Qt\4.7.2\mkspecs\default" "-I." "-I." "-I."</Command>
     </CustomBuild>
     <ClInclude Include="cv\FindPlate.h" />
-    <ClInclude Include="RegisterPlate.h" />
+    <ClInclude Include="licenseplatestring.h" />
     <ClInclude Include="connection.h" />
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,5 @@
-﻿#ifndef REGISTERPLATE_H
-#define REGISTERPLATE_H
+﻿#ifndef LICENSEPLATESTRING_H
+#define LICENSEPLATESTRING_H
 /****************************************************************************
 ** RDM - Reconhecimento Digital de Matriculas
 ** Copyright (C) 2011  Duarte Duarte, Miguel Mendes
@@ -23,7 +23,7 @@
 
 namespace rdm {
 
-    class RegisterPlate
+    class LicensePlateString
     {
     public: // enums
         enum EpochType {
@@ -61,12 +61,12 @@ namespace rdm {
     private: // static data members
         static char separator;
     public:
-        RegisterPlate();
-        RegisterPlate(std::string& plate); // pre Valid(plate);
-        RegisterPlate(char* plate); // pre Valid(plate);
-        RegisterPlate(std::string& a, std::string& b, std::string& c); // pre Valid(a, b, c);
-        RegisterPlate(char a[], char b[], char c[]); // pre Valid(a, b, c);
-        virtual ~RegisterPlate();
+        LicensePlateString();
+        LicensePlateString(std::string& plate); // pre Valid(plate);
+        LicensePlateString(char* plate); // pre Valid(plate);
+        LicensePlateString(std::string& a, std::string& b, std::string& c); // pre Valid(a, b, c);
+        LicensePlateString(char a[], char b[], char c[]); // pre Valid(a, b, c);
+        virtual ~LicensePlateString();
 
         virtual std::string GetPlate() const;
         virtual std::string GetOwner() const;
@@ -102,11 +102,11 @@ namespace rdm {
         virtual std::string GetSecondBlock() const;
         virtual std::string GetThirdBlock() const;
 
-        virtual void Copy(const RegisterPlate& other);
-        virtual RegisterPlate& operator = (const RegisterPlate& other);
+        virtual void Copy(const LicensePlateString& other);
+        virtual LicensePlateString& operator = (const LicensePlateString& other);
 
-        virtual bool operator == (const RegisterPlate& other) const;
-        virtual bool operator != (const RegisterPlate& other) const;
+        virtual bool operator == (const LicensePlateString& other) const;
+        virtual bool operator != (const LicensePlateString& other) const;
 
         virtual void Write(std::ostream& output = std::cout) const;
         virtual void WriteLine(std::ostream& output = std::cout) const;
