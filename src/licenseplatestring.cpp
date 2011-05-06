@@ -514,9 +514,7 @@ namespace rdm
 
         QProcess *tesseractProc = new QProcess();
         tesseractProc->start(program, arguments);
-        int i = 0;
         tesseractProc->waitForFinished();
-        
         tesseractProc->terminate();
 
         QFile file("plate.txt");
