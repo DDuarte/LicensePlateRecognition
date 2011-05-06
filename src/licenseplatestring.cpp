@@ -81,6 +81,19 @@ namespace rdm
     {
         return plate;
     }
+
+    std::string LicensePlateString::GetPlateWithSep() const
+    {
+        char s = Separator();
+        std::string result;
+        if (s == 0) // no separator
+            return plate;
+        else
+            result = plate.substr(0, 2) + s +
+                plate.substr(2, 2) + s +
+                plate.substr(4, 2);
+        return result;
+    }
     
     std::string LicensePlateString::GetOwner() const
     {
@@ -498,10 +511,7 @@ namespace rdm
         QProcess *tesseractProc = new QProcess();
         tesseractProc->start(program, arguments);
         int i = 0;
-        while (!tesseractProc->waitForFinished())
-        {
-            qDebug() << i++;
-        }
+        tesseractProc->waitForFinished();
         
         tesseractProc->terminate();
 

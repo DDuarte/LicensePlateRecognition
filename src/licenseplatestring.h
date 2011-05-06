@@ -70,6 +70,7 @@ namespace rdm {
         virtual ~LicensePlateString();
 
         virtual std::string GetPlate() const;
+        virtual std::string GetPlateWithSep() const;
         virtual std::string GetOwner() const;
         virtual std::string GetColor() const;
         virtual int         GetYear() const;

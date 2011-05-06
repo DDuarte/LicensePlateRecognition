@@ -399,7 +399,7 @@ void MainWindow::takeScreenshot()
     t.start();
 
     QString format = "png";
-    QString initialPath = QDir::currentPath() + (plate.isEmpty() ? tr("/temp.") : tr("/%1").arg(plate)) + format;
+    QString initialPath = QDir::currentPath() + (plate.isEmpty() ? tr("/temp.") : tr("/%1").arg(plate));
     // might want to change "temp" to plate number later (use RegisterPlate)
     QString fileName = QFileDialog::getSaveFileName(this, tr("Guardar como..."),
         initialPath,
@@ -725,7 +725,7 @@ void MainWindow::OCR()
     lic.SetWarnings();
     lic.SetSeparator('-');
 
-    QTableWidgetItem *plateItem = new QTableWidgetItem(QString().fromStdString(lic.GetPlate()));
+    QTableWidgetItem *plateItem = new QTableWidgetItem(QString().fromStdString(lic.GetPlateWithSep()));
     QTableWidgetItem *colorItem = new QTableWidgetItem("N/A");
     QTableWidgetItem *hourItem = new QTableWidgetItem(QTime().currentTime().toString("hh:mm:ss"));
     QTableWidgetItem *dateItem = new QTableWidgetItem(QDateTime().currentDateTime().toString("dd.MM.yyyy"));
@@ -738,7 +738,7 @@ void MainWindow::OCR()
     plateTable->setItem(4, 0, warnItem);
     plateTable->setItem(5, 0, passItem);
 
-    QTableWidgetItem *plateItemT = new QTableWidgetItem(QString().fromStdString(lic.GetPlate()));
+    QTableWidgetItem *plateItemT = new QTableWidgetItem(QString().fromStdString(lic.GetPlateWithSep()));
     QTableWidgetItem *colorItemT = new QTableWidgetItem("N/A");
     QTableWidgetItem *hourItemT = new QTableWidgetItem(QTime().currentTime().toString("hh:mm:ss"));
     QTableWidgetItem *dateItemT = new QTableWidgetItem(QDateTime().currentDateTime().toString("dd.MM.yyyy"));
