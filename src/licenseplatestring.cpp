@@ -28,6 +28,10 @@
 #include <QSqlError>
 #include <QVariant>
 #include <QString>
+#include <QProcess>
+#include <QStringList>
+#include <QFile>
+#include <QTextStream>
 #include <QDebug>
 
 #include "licenseplatestring.h"
@@ -62,7 +66,13 @@ namespace rdm
         std::string str3 = c;
         plate = str1 + str2 + str3;
     }
-    
+
+    LicensePlateString::LicensePlateString(QString plate):
+        plate(plate.toStdString())
+    {
+    }
+
+
     LicensePlateString::~LicensePlateString()
     {
     }
@@ -164,17 +174,23 @@ namespace rdm
     
     std::string LicensePlateString::GetFirstBlock(std::string newPlate)
     {
-        return newPlate.substr(0, 2);
+        if (newPlate.size() >= static_cast<int>(6))
+            return newPlate.substr(0, 2);
+        return "";
     }
     
     std::string LicensePlateString::GetSecondBlock(std::string newPlate)
     {
-        return newPlate.substr(2, 2);
+        if (newPlate.size() >= static_cast<int>(6))
+            return newPlate.substr(2, 2);
+        return "";
     }
     
     std::string LicensePlateString::GetThirdBlock(std::string newPlate)
     {
-        return newPlate.substr(4, 2);
+        if (newPlate.size() >= static_cast<int>(6))
+            return newPlate.substr(4, 2);
+        return "";
     }
     
     bool LicensePlateString::ValidBlock(std::string block)
@@ -255,6 +271,8 @@ namespace rdm
     
     bool LicensePlateString::IsNumericBlock(std::string block)
     {
+        if (block[0] <= 0 || block[1] <= 0) // char with negative value
+            return false;                   // are not cool
         if (std::isdigit(block[0]) && std::isdigit(block[1]))
             return true;
         else if (!std::isdigit(block[0]) && !std::isdigit(block[1]))
@@ -267,8 +285,13 @@ namespace rdm
     
     void LicensePlateString::RemoveNonAlphanumeric()
     {
+        if (GetPlate().size() <= 0)
+            return;
         for (int i = 0; i < static_cast<int>(GetPlate().size()); i++)
-            if (!(std::isalnum(plate[i]))) {
+            if (plate[i] <= static_cast<int>(0) ||
+                plate[i] >= static_cast<int>(256) ||
+                !std::isalnum(plate[i]))
+            {
                 plate.erase(i, 1);
                 i--;
             }
@@ -281,7 +304,8 @@ namespace rdm
         db.setUserName("root");
         db.setPassword("root");
         db.setDatabaseName("rdm");
-        if (!db.open()) {
+        if (!db.open())
+        {
             qDebug() << "Can't open DB";
             return false;
         }
@@ -405,8 +429,12 @@ namespace rdm
     {
         if (!IsValid())
             SetWarnings(PLATE_INVALID);
-        if (GetEpoch())
+        else
+            RemoveWarnings(PLATE_INVALID);
+        if (GetEpoch() == NYI)
             SetWarnings(PLATE_OUT_OF_CIRCULATION);
+        else
+            RemoveWarnings(PLATE_OUT_OF_CIRCULATION);
     }
     
     void LicensePlateString::SetWarnings(const Warnings otherWarnings)
@@ -459,6 +487,57 @@ namespace rdm
     {
         this->RemoveNonAlphanumeric();
         this->ToUpper();
+    }
+
+    QString LicensePlateString::RunOCR()
+    {
+        QString program = "tesseract.exe";
+        QStringList arguments;
+        arguments << "plate.jpg" << "plate" << "-l" << "eng";
+
+        QProcess *tesseractProc = new QProcess();
+        tesseractProc->start(program, arguments);
+        int i = 0;
+        while (!tesseractProc->waitForFinished())
+        {
+            qDebug() << i++;
+        }
+        
+        tesseractProc->terminate();
+
+        QFile file("plate.txt");
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            qDebug() << "Ficheiro não encontrado";
+            return QString("");
+        }
+        QTextStream stream(&file);
+        
+        QString line = stream.read(10);
+        file.close();
+        return line; // read 10 bytes max
+    }
+
+    QString LicensePlateString::GetWarningsText(int warnings)
+    {
+        QString result("");
+        qDebug() << warnings;
+        if (warnings & PLATE_INVALID)
+            return result = "Inválida.";
+        if (warnings & PLATE_OUT_OF_CIRCULATION)
+            result += "Fora de circulação.";
+        if (warnings & PLATE_COLOR_MISMATCH)
+            result += "Cor difere.";
+        if (warnings & PLATE_STOLEN)
+            result += "Roubada.";
+        if (warnings & PLATE_NOT_AUTHORIZED)
+            result += "Não autorizada.";
+        
+        if (result.isEmpty())
+            result = "N/A";
+        else
+            result.replace(".", ". ");
+        return result;
     }
 
 }

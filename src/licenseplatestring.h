@@ -56,7 +56,7 @@ namespace rdm {
         std::string brand;
         std::string model;
         std::string registryTime;
-        int warnings; // TODO convert type to enum Warnings
+        int warnings;
 
     private: // static data members
         static char separator;
@@ -66,6 +66,7 @@ namespace rdm {
         LicensePlateString(char* plate); // pre Valid(plate);
         LicensePlateString(std::string& a, std::string& b, std::string& c); // pre Valid(a, b, c);
         LicensePlateString(char a[], char b[], char c[]); // pre Valid(a, b, c);
+        LicensePlateString(QString plate); // pre Valid(plate.toStdString());
         virtual ~LicensePlateString();
 
         virtual std::string GetPlate() const;
@@ -76,8 +77,7 @@ namespace rdm {
         virtual std::string GetModel() const;
         virtual std::string GetRegistryTime() const;
         virtual int         GetWarnings() const;
-
-        virtual EpochType GetEpoch() const;
+        virtual EpochType   GetEpoch() const;
 
         virtual void SetPlate(const std::string& otherPlate);
         virtual void SetOwner(const std::string& otherOwner);
@@ -134,8 +134,12 @@ namespace rdm {
         static char Separator();
         static bool IsNumericBlock(std::string block); // pre ValidBlock(block);
 
+        static QString RunOCR();
+
         static bool DBConnectionCreate();
         static void DBConnectionClose();
+
+        static QString GetWarningsText(int warnings);
 
     };
 }

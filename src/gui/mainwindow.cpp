@@ -31,6 +31,7 @@
 #include "dbviewer.h"
 #include "../connection.h"
 #include "../cv/FindPlate.h"
+#include "../licenseplatestring.h"
 
 #include "opencv2/imgproc/imgproc.hpp" // still needed for outdated cam processing
                                  // it will be removed soon
@@ -398,7 +399,7 @@ void MainWindow::takeScreenshot()
     t.start();
 
     QString format = "png";
-    QString initialPath = QDir::currentPath() + tr("/temp.").arg(plate) + format;
+    QString initialPath = QDir::currentPath() + (plate.isEmpty() ? tr("/temp.") : tr("/%1").arg(plate)) + format;
     // might want to change "temp" to plate number later (use RegisterPlate)
     QString fileName = QFileDialog::getSaveFileName(this, tr("Guardar como..."),
         initialPath,
@@ -444,11 +445,13 @@ void MainWindow::startImage()
     a.SetConfidenceMinium(50);
 
     a.Go();
-
-    QImage fullImage = a.GetQImageFromMat(a.ConvertToRGB(a.GetFullImage()));
+    cv::Mat procPlate = a.GetPlateImage();
+    QImage fullImage = a.GetQImageFromMat(a.GetFullImage());
     camLabel->setPixmap(QPixmap::fromImage(fullImage)); // full image
-    QImage plateImage = a.GetQImageFromMat(a.GetPlateImage());
+    QImage plateImage = a.GetQImageFromMat(procPlate);
     plateLabel->setPixmap(QPixmap::fromImage(plateImage)); // plate image
+
+    rdm::FindPlate::SaveImageToHD(procPlate, "plate.jpg");
 
     enableDisplay();
 
@@ -711,57 +714,45 @@ void MainWindow::OCR()
 {
     QTime t;
     t.start();
-    QPixmap plate(*plateLabel->pixmap());
-    plate.save("plate.jpg");
-    QString program = "tesseract.exe";
-    QStringList arguments;
-    arguments << "plate.jpg" << "plate" << "-l" << "eng";
-
-    QProcess *tesseractProc = new QProcess();
-    tesseractProc->start(program, arguments);
-    
-    connect(tesseractProc, SIGNAL(finished(int)), this, SLOT(getPlateText()));
-    tesseractProc->terminate();
+    QString plate = rdm::LicensePlateString::RunOCR();
     infoList->addItem(tr("Analise de caracteres: %1 ms").arg(t.elapsed()));
-}
 
-void MainWindow::getPlateText()
-{
-    QFile file("plate.txt");
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        qDebug() << "Ficheiro nao encontrado";
-        return;
-    }
-    QTextStream stream (&file);
-    QString line;
-    line = stream.read(10);
-    QTableWidgetItem *newItem = new QTableWidgetItem(line);
-    plateTable->setItem(0,0,newItem);
-    file.close();
-    lookupDB(line);
-    plate = line;
-}
+    rdm::LicensePlateString lic(plate);
+    qDebug() << QString().fromStdString(lic.GetPlate());
+    lic.Normalize();
+    qDebug() << QString().fromStdString(lic.GetPlate());
 
-void MainWindow::lookupDB(QString plateText)
-{
-    // TODO replace by RegisterPlate class
-    plate = plateText;
-    QSqlQuery *colorQ = new QSqlQuery(
-        tr("SELECT `color` FROM `plates` WHERE `registration` = %1").arg(plateText));
-    colorQ->exec();
+    lic.SetWarnings();
+    lic.SetSeparator('-');
 
-    QTableWidgetItem *plate = new QTableWidgetItem(plateText);
-    QTableWidgetItem *color = new QTableWidgetItem(colorQ->value(0).toString());
-    QTableWidgetItem *time = new QTableWidgetItem(QTime().currentTime().toString("hh:mm:ss"));
-    QTableWidgetItem *date = new QTableWidgetItem(QDateTime().currentDateTime().toString("dd.MM.yyyy"));
+    QTableWidgetItem *plateItem = new QTableWidgetItem(QString().fromStdString(lic.GetPlate()));
+    QTableWidgetItem *colorItem = new QTableWidgetItem("N/A");
+    QTableWidgetItem *hourItem = new QTableWidgetItem(QTime().currentTime().toString("hh:mm:ss"));
+    QTableWidgetItem *dateItem = new QTableWidgetItem(QDateTime().currentDateTime().toString("dd.MM.yyyy"));
+    QTableWidgetItem *warnItem = new QTableWidgetItem(rdm::LicensePlateString::GetWarningsText(lic.GetWarnings()));
+    QTableWidgetItem *passItem = new QTableWidgetItem("N/A");
+    plateTable->setItem(0, 0, plateItem);
+    plateTable->setItem(1, 0, colorItem);
+    plateTable->setItem(2, 0, hourItem);
+    plateTable->setItem(3, 0, dateItem);
+    plateTable->setItem(4, 0, warnItem);
+    plateTable->setItem(5, 0, passItem);
 
+    QTableWidgetItem *plateItemT = new QTableWidgetItem(QString().fromStdString(lic.GetPlate()));
+    QTableWidgetItem *colorItemT = new QTableWidgetItem("N/A");
+    QTableWidgetItem *hourItemT = new QTableWidgetItem(QTime().currentTime().toString("hh:mm:ss"));
+    QTableWidgetItem *dateItemT = new QTableWidgetItem(QDateTime().currentDateTime().toString("dd.MM.yyyy"));
+    QTableWidgetItem *warnItemT = new QTableWidgetItem(rdm::LicensePlateString::GetWarningsText(lic.GetWarnings()));
     int count = listTable->rowCount();
-    listTable->setRowCount(count + 1);
-    listTable->setItem(count,0,plate);
-    listTable->setItem(count,1,color);
-    listTable->setItem(count,2,time);
-    listTable->setItem(count,3,date);
+    listTable->setRowCount(count + 1); // this is the reason why we can't enable sorting on this table
+    listTable->setItem(count, 0, plateItemT);
+    listTable->setItem(count, 1, colorItemT);
+    listTable->setItem(count, 2, hourItemT);
+    listTable->setItem(count, 3, dateItemT);
+    listTable->setItem(count, 4, warnItemT);
 
+    this->plate = QString().fromStdString(lic.GetPlate());
+
+    plateTable->resizeColumnsToContents();
     listTable->resizeColumnsToContents();
 }

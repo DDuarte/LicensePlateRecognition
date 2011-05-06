@@ -140,4 +140,9 @@ namespace rdm
             qDebug() << "ERROR: plateImg is empty after process";
     }
 
+    void FindPlate::SaveImageToHD( cv::Mat img, std::string fileName )
+    {
+        cv::imwrite(fileName, img);
+    }
+    
 }

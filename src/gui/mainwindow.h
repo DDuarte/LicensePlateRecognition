@@ -73,7 +73,6 @@ private slots:
     void showTime();
     void dbViewer();
     void refreshDBSettings();
-    void getPlateText();
 
     void camTimeout(); // cam related
 
