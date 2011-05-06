@@ -84,6 +84,8 @@ namespace rdm
 
     std::string LicensePlateString::GetPlateWithSep() const
     {
+        if (plate.size() < static_cast<int>(6))
+            return std::string("ERRO: Não encontrada.");
         char s = Separator();
         std::string result;
         if (s == 0) // no separator
@@ -284,6 +286,8 @@ namespace rdm
     
     bool LicensePlateString::IsNumericBlock(std::string block)
     {
+        if (block.empty())
+            return false;
         if (block[0] <= 0 || block[1] <= 0) // char with negative value
             return false;                   // are not cool
         if (std::isdigit(block[0]) && std::isdigit(block[1]))

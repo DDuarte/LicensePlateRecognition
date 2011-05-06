@@ -63,6 +63,8 @@ namespace rdm
         cv::Size targetSize = target.size();
         int targetWidth = targetSize.width;
         int targetHeight = targetSize.height;
+        this->SetPlateWidth(static_cast<int>(9.3 * targetWidth));
+                      // 9.3 -> ratio between target width and plate size "average"
 
         if (!FastMatchTemplate(source, target, &foundPointsList, &confidencesList, confidenceMin, false))
         {

@@ -441,7 +441,6 @@ void MainWindow::startImage()
 
     rdm::FindPlate a(source);
     a.SetTarget(target);
-    a.SetPlateWidth(770);
     a.SetConfidenceMinium(50);
 
     a.Go();
