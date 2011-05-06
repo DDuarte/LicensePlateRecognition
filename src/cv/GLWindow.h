@@ -17,7 +17,7 @@ protected:
 	void resizeGL(int width, int height);
 	void paintGL();
   
-protected slots:
+public slots:
 	virtual void timeOutSlot();
 	virtual void openCamera();
   

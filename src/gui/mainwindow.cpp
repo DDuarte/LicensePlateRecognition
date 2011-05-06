@@ -32,6 +32,7 @@
 #include "../connection.h"
 #include "../cv/FindPlate.h"
 #include "../licenseplatestring.h"
+#include "../cv/GLWindow.h"
 
 #include "opencv2/imgproc/imgproc.hpp" // still needed for outdated cam processing
                                  // it will be removed soon
@@ -287,31 +288,9 @@ void MainWindow::importImage()
 void MainWindow::importCam()
 {
     stop();
-    if (!mCameraRunning)
-    {
-        QTime t;
-        t.start();
-        mCap.open(CV_CAP_ANY);
-        if (!mCap.isOpened())
-        {
-            QMessageBox::warning(this, tr("Câmara não encontrada"), tr("Não foi possível ligar à <i>webcam</i>."), QMessageBox::Ok);
-            return;
-        }
-
-        mCap.set(CV_CAP_PROP_FRAME_WIDTH, 640.0);
-        mCap.set(CV_CAP_PROP_FRAME_HEIGHT, 480.0);
-        mCap.set(CV_CAP_PROP_FPS, 100.0);
-
-        mCameraRunning = true;
-        mCameraTimer.start(20);
-        connect(&mCameraTimer, SIGNAL(timeout()), this, SLOT(camTimeout()));
-        infoList->addItem(tr("Abrir câmara: %1 ms").arg(t.elapsed()));
-
-        enableDisplay();
-    }
-    else
-        QMessageBox::warning(this, tr("Erro"), tr("Câmara já está activada."), QMessageBox::Ok);
-
+    GLWindow *windowGL = new GLWindow();
+    camLabel->hide();
+    windowGL->openCamera();
 }
 
 void MainWindow::camTimeout()

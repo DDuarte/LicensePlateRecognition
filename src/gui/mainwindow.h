@@ -163,6 +163,7 @@ private:
     QTimer mCameraTimer;
     QTime *mTime;
     double mFPS;
+
 };
 
 #endif // MAINWINDOW_H
