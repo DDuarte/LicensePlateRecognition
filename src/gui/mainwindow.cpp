@@ -288,21 +288,9 @@ void MainWindow::importImage()
 void MainWindow::importCam()
 {
     stop();
-    GLWindow *windowGL = new GLWindow();
+    GLWindow *windowGL = new GLWindow(); // CRASHING
     camLabel->hide();
     windowGL->openCamera();
-}
-
-void MainWindow::camTimeout()
-{
-    if (mCameraRunning && mCap.isOpened())
-    {
-        mCap >> mImageCam;
-        cvtColor( mImageCam, mImageCam, CV_BGR2RGB);
-        QImage tmp((uchar*)mImageCam.data, mImageCam.cols, mImageCam.rows,
-                        mImageCam.step, QImage::Format_RGB888);
-        camLabel->setPixmap(QPixmap::fromImage(tmp));
-    }
 }
 
 void MainWindow::importVideo()
@@ -593,13 +581,15 @@ void MainWindow::refreshDBSettings()
     {
          dbStatus->setPixmap(QPixmap(":/images/wrong.png"));
          dbStatus->setToolTip(tr("Não conectado"));
-         dbOpenee = false;
+		 dbViewerAction->setDisabled(true);
+		 dbViewerAction->setToolTip(tr("Não foi possível ligar à base de dados. Por favor, altere a configuração."));
     }
     else
     {
          dbStatus->setPixmap(QPixmap(":images/correct.png"));
          dbStatus->setToolTip(tr("Conectado"));
-         dbOpenee = true;
+		 dbViewerAction->setEnabled(true);
+		 dbViewerAction->setStatusTip(tr("Mostra/adiciona/elimina automóveis registados"));
     }
 }
 
@@ -640,19 +630,6 @@ void MainWindow::clock()
     connect(timer, SIGNAL(timeout()), this, SLOT(showTime()));
     timer->start(1000);
     showTime();
-
-    if (!dbOpenee) // TODO this is not working (button goes grey even if db is open)
-    {
-        dbViewerAction->setDisabled(true);
-        dbViewerAction->setToolTip(
-            tr("Não foi possível ligar à base de dados. Por favor, altere a configuração."));
-    }
-    else
-    {
-        dbViewerAction->setDisabled(false);
-        dbViewerAction->setStatusTip(
-            tr("Mostra/adiciona/elimina os automóveis registados"));
-    }
 }
 
 void MainWindow::showTime()

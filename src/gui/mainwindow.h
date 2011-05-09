@@ -74,8 +74,6 @@ private slots:
     void dbViewer();
     void refreshDBSettings();
 
-    void camTimeout(); // cam related
-
 private:
     DBViewer *dbViewerWin;
 
