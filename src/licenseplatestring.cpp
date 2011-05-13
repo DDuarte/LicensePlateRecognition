@@ -40,26 +40,61 @@ namespace rdm
 {
 
     LicensePlateString::LicensePlateString():
-        plate("00AA00")
+        plate("00AA00"),
+		owner(""),
+		color(""),
+		year(0),
+		brand(""),
+		model(""),
+		registryTime(""),
+		warnings(0)
     {
     }
     
     LicensePlateString::LicensePlateString(std::string& plate):
-        plate(plate)
+        plate(plate),
+		owner(""),
+		color(""),
+		year(0),
+		brand(""),
+		model(""),
+		registryTime(""),
+		warnings(0)
     {
     }
     
     LicensePlateString::LicensePlateString(std::string& a, std::string& b, std::string& c):
-        plate(a + b + c)
+        plate(a + b + c),
+		owner(""),
+		color(""),
+		year(0),
+		brand(""),
+		model(""),
+		registryTime(""),
+		warnings(0)
     {
     }
     
     LicensePlateString::LicensePlateString(char* plate):
-        plate(plate)
+        plate(plate),
+		owner(""),
+		color(""),
+		year(0),
+		brand(""),
+		model(""),
+		registryTime(""),
+		warnings(0)
     {
     }
     
-    LicensePlateString::LicensePlateString(char a[], char b[], char c[])
+    LicensePlateString::LicensePlateString(char a[], char b[], char c[]):
+		owner(""),
+		color(""),
+		year(0),
+		brand(""),
+		model(""),
+		registryTime(""),
+		warnings(0)
     {
         std::string str1 = a;
         std::string str2 = b;
@@ -68,7 +103,14 @@ namespace rdm
     }
 
     LicensePlateString::LicensePlateString(QString plate):
-        plate(plate.toStdString())
+        plate(plate.toStdString()),
+		owner(""),
+		color(""),
+		year(0),
+		brand(""),
+		model(""),
+		registryTime(""),
+		warnings(0)
     {
     }
 
@@ -302,18 +344,25 @@ namespace rdm
     
     void LicensePlateString::RemoveNonAlphanumeric()
     {
-        if (GetPlate().size() <= 0)
-            return;
-        for (int i = 0; i < static_cast<int>(GetPlate().size()); i++)
-            if (plate[i] <= static_cast<int>(0) ||
-                plate[i] >= static_cast<int>(256) ||
-                !std::isalnum(plate[i]))
-            {
-                plate.erase(i, 1);
-                i--;
-            }
+		SetPlate(RemoveNonAlphanumeric(GetPlate()));
     }
-    
+
+	std::string LicensePlateString::RemoveNonAlphanumeric(std::string string)
+	{
+		if (string.size() <= 0)
+			return "";
+		for (int i = 0; i < static_cast<int>(string.size()); i++)
+			if (string[i] <= static_cast<int>(0) ||
+				string[i] >= static_cast<int>(256) ||
+				!std::isalnum(string[i]))
+			{
+				string.erase(i, 1);
+				i--;
+			}
+		return string;
+	}
+
+
     bool LicensePlateString::DBConnectionCreate()
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
@@ -466,7 +515,7 @@ namespace rdm
     
     bool LicensePlateString::IsStolen() const
     {
-        return GetWarnings() & PLATE_STOLEN; // TODO verify if it's correct
+        return GetWarnings() & PLATE_STOLEN;
     }
     
     bool LicensePlateString::IsOutOfCirculation() const
@@ -524,10 +573,17 @@ namespace rdm
             return QString("");
         }
         QTextStream stream(&file);
+		QString line;
         
-        QString line = stream.read(10);
+		while (!stream.atEnd())
+		{
+			line = stream.readLine();
+			line = QString().fromStdString(RemoveNonAlphanumeric(line.simplified().toStdString()));
+			if (!line.isEmpty())
+				break;
+		}
         file.close();
-        return line; // read 10 bytes max
+        return line;
     }
 
     QString LicensePlateString::GetWarningsText(int warnings)

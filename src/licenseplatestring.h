@@ -142,6 +142,8 @@ namespace rdm {
 
         static QString GetWarningsText(int warnings);
 
+		static std::string RemoveNonAlphanumeric(std::string string);
+
     };
 }
 

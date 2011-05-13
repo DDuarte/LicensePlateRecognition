@@ -75,6 +75,11 @@ namespace rdm
         fullImg = source;
         DrawFoundTargets(&fullImg, targetSize, foundPointsList, confidencesList, 255, 0, 0, 4);
 
+		if (foundPointsList.empty())
+		{
+			qDebug() << "No points found.";
+			return;
+		}
         int xPoint = foundPointsList[0].x + 5 + targetWidth * 0.5;
         int yPoint = foundPointsList[0].y - targetHeight * 0.5;
         cv::Rect rect(xPoint, yPoint, plateWidth, targetHeight + 10); // manually adjusted

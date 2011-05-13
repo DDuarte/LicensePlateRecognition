@@ -423,6 +423,7 @@ void MainWindow::startImage()
 
     infoList->addItem(tr("Processar imagem: %1 ms").arg(t.elapsed()));
     
+	// if (!plateImage.isNull())
     OCR();
 }
 
@@ -669,17 +670,22 @@ void MainWindow::OCR()
 {
     QTime t;
     t.start();
-    QString plate = rdm::LicensePlateString::RunOCR();
-    infoList->addItem(tr("Analise de caracteres: %1 ms").arg(t.elapsed()));
+	rdm::LicensePlateString lic("ERRO: Não encontrada.");
+	if (!plateLabel->pixmap()->isNull())
+	{
+		lic.SetPlate(rdm::LicensePlateString::RunOCR().toStdString());
+		qDebug() << QString().fromStdString(lic.GetPlate());
+		lic.Normalize();
+		qDebug() << QString().fromStdString(lic.GetPlate());
 
-    rdm::LicensePlateString lic(plate);
-    qDebug() << QString().fromStdString(lic.GetPlate());
-    lic.Normalize();
-    qDebug() << QString().fromStdString(lic.GetPlate());
+		lic.SetWarnings();
+		lic.SetSeparator('-');
 
-    lic.SetWarnings();
-    lic.SetSeparator('-');
+		infoList->addItem(tr("Analise de caracteres: %1 ms").arg(t.elapsed()));
+	}
 
+	infoList->addItem(tr("Warnings: %1").arg(lic.GetWarnings()));
+    
     QTableWidgetItem *plateItem = new QTableWidgetItem(QString().fromStdString(lic.GetPlateWithSep()));
     QTableWidgetItem *colorItem = new QTableWidgetItem("N/A");
     QTableWidgetItem *hourItem = new QTableWidgetItem(QTime().currentTime().toString("hh:mm:ss"));
