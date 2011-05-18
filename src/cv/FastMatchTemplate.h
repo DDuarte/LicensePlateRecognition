@@ -108,6 +108,7 @@ MultipleMaxLoc(const Mat& image,
     green - the green value (0-255)
     blue - the blue value (0-255)
     lineSize - the thickness of the line
+    plateWidth - used to draw the line around plate
 */
 void
 DrawFoundTargets(Mat*                  image,
@@ -117,6 +118,7 @@ DrawFoundTargets(Mat*                  image,
                  int                   red   = 0,
                  int                   green = 255,
                  int                   blue  = 0,
-                 int                   lineSize = 1);
+                 int                   lineSize = 1,
+                 int                   plateWidth = 900);
 
 #endif

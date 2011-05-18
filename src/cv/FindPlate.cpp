@@ -53,6 +53,8 @@ namespace rdm
 
     cv::Mat FindPlate::ConvertToRGB(cv::Mat img)
     {
+		if (img.empty())
+			return img;
         cv::Mat imgClone = img.clone();
         cv::cvtColor(img, imgClone, CV_BGR2RGB);
         return imgClone;
@@ -63,17 +65,17 @@ namespace rdm
         cv::Size targetSize = target.size();
         int targetWidth = targetSize.width;
         int targetHeight = targetSize.height;
-        this->SetPlateWidth(static_cast<int>(9.3 * targetWidth));
+		int newWidth = static_cast<int>(9.3 * targetWidth);
+        this->SetPlateWidth(newWidth);
                       // 9.3 -> ratio between target width and plate size "average"
 
         if (!FastMatchTemplate(source, target, &foundPointsList, &confidencesList, confidenceMin, false))
         {
             qDebug() << "Plate not found";
             return;
-            // TODO What happens if nothing is found? gui will probably crash
         }
         fullImg = source;
-        DrawFoundTargets(&fullImg, targetSize, foundPointsList, confidencesList, 255, 0, 0, 4);
+        DrawFoundTargets(&fullImg, targetSize, foundPointsList, confidencesList, 255, 0, 0, 4, newWidth);
 
 		if (foundPointsList.empty())
 		{
@@ -82,8 +84,8 @@ namespace rdm
 		}
         int xPoint = foundPointsList[0].x + 5 + targetWidth * 0.5;
         int yPoint = foundPointsList[0].y - targetHeight * 0.5;
-        cv::Rect rect(xPoint, yPoint, plateWidth, targetHeight + 10); // manually adjusted
-
+        //cv::Rect rect(xPoint, yPoint, plateWidth, targetHeight + 10); // manually adjusted
+        cv::Rect rect(foundPointsList[0].x +targetWidth * 0.5, foundPointsList[0].y - targetHeight * 0.5, plateWidth, targetHeight);
         plateImg = source(rect);
         source(rect).convertTo(plateImg, plateImg.type());
     }
@@ -147,7 +149,7 @@ namespace rdm
             qDebug() << "ERROR: plateImg is empty after process";
     }
 
-    void FindPlate::SaveImageToHD( cv::Mat img, std::string fileName )
+    void FindPlate::SaveImageToHardDrive(cv::Mat img, std::string fileName)
     {
         cv::imwrite(fileName, img);
     }

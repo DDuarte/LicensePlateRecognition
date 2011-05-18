@@ -56,22 +56,24 @@ public:
     QLabel *dbStatus;
 
 private slots:
+	void startChoose();
+	void refresh();
+	void stop();
+	void takeScreenshot();
+	void dbViewer();
+	void importImage();
+	void importImageDir();
+	void importVideo();
+	void importCam();
+	void setSettings();
+	void writeSettings();
     void about();
     void help();
-    void takeScreenshot();
-    void importImage();
-    void importCam();
-    void importVideo();
-    void startImage();
-    void startChoose();
-    void stop();
-    void refresh();
-    void setSettings();
-    void writeSettings();
+
     void setLoadDirectory(); // settings win
     void setPlateTemplatePath(); // settings win
     void showTime();
-    void dbViewer();
+    
     void refreshDBSettings();
 
 private:
@@ -90,26 +92,28 @@ private:
     void enableDisplay();
     void disableDisplay();
 
-    void lookupDB(QString plateText); // TODO replace by RegisterPlate class
-
+	void startImage();
+	void startImageDir(QStringList* dir);
+	
     void clock();
 
     QString plate;
     QString fileName;
+	QString dirFileName;
 
+	QAction *startAction;
+	QAction *refreshAction;
+	QAction *stopAction;
     QAction *takeScreenshotAction;
+	QAction *dbViewerAction;
     QAction *importImageAction;
+	QAction *importImageDirAction;
+	QAction *importVideoAction;
     QAction *importCamAction;
-    QAction *importVideoAction;
-    QAction *startAction;
-    QAction *stopAction;
-    QAction *refreshAction;
-    QAction *aboutAction;
     QAction *settingsAction;
-    QAction *exitAction;
-    QAction *newCarAction;
-    QAction *dbViewerAction;
+    QAction *aboutAction;
     QAction *helpAction;
+    QAction *exitAction;
 
     QLabel *camLabel; // Pixmap
     QLabel *plateLabel; // Pixmap

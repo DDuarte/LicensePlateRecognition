@@ -22,5 +22,6 @@
         <file>images/correct.png</file>
         <file>images/wrong.png</file>
         <file>images/help.png</file>
+        <file>images/loadimagedir.png</file>
     </qresource>
 </RCC>

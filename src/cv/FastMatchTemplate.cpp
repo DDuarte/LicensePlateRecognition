@@ -288,7 +288,8 @@ DrawFoundTargets(Mat*                  image,
                  int                   red,
                  int                   green,
                  int                   blue,
-                 int                   lineSize)
+                 int                   lineSize,
+				 int                   plateWidth)
 {
     int numPoints = pointsList.size();
     for(int currPoint = 0; currPoint < numPoints; currPoint++)
@@ -296,13 +297,13 @@ DrawFoundTargets(Mat*                  image,
         const Point& point = pointsList[currPoint];
 
         // write the confidences to stdout
-        printf("\nTarget found at (%d, %d), with confidence = %3.3f %%.\n",
-            point.x,
-            point.y,
-            confidencesList[currPoint]);
+        // printf("\nTarget found at (%d, %d), with confidence = %3.3f %%.\n",
+        //     point.x,
+        //     point.y,
+        //     confidencesList[currPoint]);
 
         // draw a circle at the center
-        circle(*image, point, 2, CV_RGB(red, green, blue));
+        // circle(*image, point, 2, CV_RGB(red, green, blue));
 
         // draw a rectangle around the found target
         Point topLeft;
@@ -313,6 +314,6 @@ DrawFoundTargets(Mat*                  image,
         bottomRight.x = point.x + size.width / 2;
         bottomRight.y = point.y + size.height / 2;
 
-        rectangle(*image, topLeft, bottomRight, CV_RGB(red, green, blue), lineSize);
+        rectangle(*image, Point(bottomRight.x - lineSize, topLeft.y - lineSize), Point(bottomRight.x + plateWidth + lineSize, bottomRight.y + lineSize), CV_RGB(red, green, blue), lineSize);
     }
 }

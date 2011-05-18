@@ -54,7 +54,7 @@ namespace rdm
     public: // static
         static QImage GetQImageFromMat(cv::Mat img);
         static cv::Mat ConvertToRGB(cv::Mat img);
-        static void SaveImageToHD(cv::Mat img, std::string fileName);
+        static void SaveImageToHardDrive(cv::Mat img, std::string fileName);
     private:
         virtual void Process();
     };
