@@ -314,6 +314,10 @@ DrawFoundTargets(Mat*                  image,
         bottomRight.x = point.x + size.width / 2;
         bottomRight.y = point.y + size.height / 2;
 
-        rectangle(*image, Point(bottomRight.x - lineSize, topLeft.y - lineSize), Point(bottomRight.x + plateWidth + lineSize, bottomRight.y + lineSize), CV_RGB(red, green, blue), lineSize);
+        rectangle(*image,                                           // added lineSize to draw the line
+            Point(bottomRight.x - lineSize, topLeft.y - lineSize),  // outside of the plate and not inside
+            Point(bottomRight.x + plateWidth + lineSize, bottomRight.y + lineSize),
+            CV_RGB(red, green, blue),
+            lineSize);
     }
 }
