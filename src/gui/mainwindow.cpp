@@ -156,6 +156,12 @@ void MainWindow::createActions()
 	exitAction->setShortcut(QKeySequence::Quit); // Ctrl + Esc
 	exitAction->setStatusTip(tr("Termina o programa"));
 	connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
+
+    // Not yet implemeted stuff
+    helpAction->setDisabled(true);
+    importCamAction->setDisabled(true);
+    importVideoAction->setDisabled(true);
+    importImageDirAction->setDisabled(true);
 }
 
 void MainWindow::createGroupBoxes()
