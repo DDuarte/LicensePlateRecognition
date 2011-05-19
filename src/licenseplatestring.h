@@ -87,9 +87,10 @@ namespace rdm {
         virtual void SetBrand(const std::string& otherBrand);
         virtual void SetModel(const std::string& otherModel);
         virtual void SetRegistryTime(const std::string& otherRegistryTime);
-        virtual void SetWarningsRaw(const int& otherWarnings);
+        virtual void SetWarningsRaw(const int otherWarnings);
         virtual void SetWarnings(const Warnings otherWarnings);
         virtual void SetWarnings();
+        virtual void SetWarnings(const int otherWarnings);
         virtual void RemoveWarnings(const Warnings otherWarnings);
         virtual void SetNotAutorized();
         virtual void SetStolen();
@@ -136,9 +137,6 @@ namespace rdm {
         static bool IsNumericBlock(std::string block); // pre ValidBlock(block);
 
         static QString RunOCR();
-
-        static bool DBConnectionCreate();
-        static void DBConnectionClose();
 
         static QString GetWarningsText(int warnings);
 

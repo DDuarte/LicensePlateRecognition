@@ -361,28 +361,6 @@ namespace rdm
             }
         return string;
     }
-
-
-    bool LicensePlateString::DBConnectionCreate()
-    {
-        QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
-        db.setHostName("localhost");
-        db.setUserName("root");
-        db.setPassword("root");
-        db.setDatabaseName("rdm");
-        if (!db.open())
-        {
-            qDebug() << "Can't open DB";
-            return false;
-        }
-        //qDebug() << "Connected to DB";
-        return true;
-    }
-    
-    void LicensePlateString::DBConnectionClose()
-    {
-        QSqlDatabase().close();
-    }
     
     bool LicensePlateString::DBInfoLoad()
     {
@@ -394,19 +372,20 @@ namespace rdm
             if (query.next())
             {
                 std::string ownerDb = query.value(0).toString().toStdString();
-                SetOwner(*&ownerDb);
+                SetOwner(ownerDb);
                 std::string colorDb = query.value(1).toString().toStdString();
-                SetColor(*&colorDb);
+                SetColor(colorDb);
                 int yearDb = query.value(2).toInt();
                 SetYear(yearDb);
                 std::string brandDb = query.value(3).toString().toStdString();
-                SetBrand(*&brandDb);
+                SetBrand(brandDb);
                 std::string modelDb = query.value(4).toString().toStdString();
-                SetModel(*&modelDb);
+                SetModel(modelDb);
                 std::string registryTimeDb = query.value(5).toString().toStdString();
-                SetRegistryTime(*&registryTimeDb);
+                SetRegistryTime(registryTimeDb);
                 int warningsDb = query.value(6).toInt();
-                SetWarningsRaw(warningsDb);
+                // SetWarningsRaw(warningsDb);
+                SetWarnings(warningsDb);
                 return true;
             }
             else
@@ -486,7 +465,7 @@ namespace rdm
         registryTime = otherRegistryTime;
     }
     
-    void LicensePlateString::SetWarningsRaw(const int& otherWarnings)
+    void LicensePlateString::SetWarningsRaw(const int otherWarnings)
     {
         warnings = otherWarnings;
     }
@@ -506,6 +485,11 @@ namespace rdm
     void LicensePlateString::SetWarnings(const Warnings otherWarnings)
     {
         warnings |= static_cast<int>(otherWarnings);
+    }
+
+    void LicensePlateString::SetWarnings(const int otherWarnings)
+    {
+        warnings |= otherWarnings;
     }
     
     void LicensePlateString::RemoveWarnings(const Warnings otherWarnings)
@@ -591,7 +575,7 @@ namespace rdm
         QString result("");
         qDebug() << warnings;
         if (warnings & PLATE_INVALID)
-            return result = "Inválida.";
+            return result = "Inválida."; // if invalid no need to check for other warnings
         if (warnings & PLATE_OUT_OF_CIRCULATION)
             result += "Fora de circulação.";
         if (warnings & PLATE_COLOR_MISMATCH)

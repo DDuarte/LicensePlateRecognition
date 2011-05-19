@@ -722,11 +722,10 @@ void MainWindow::OCR()
     if (!plateLabel->pixmap()->isNull())
     {
         lic.SetPlate(rdm::LicensePlateString::RunOCR().toStdString());
-        qDebug() << QString().fromStdString(lic.GetPlate());
         lic.Normalize();
-        qDebug() << QString().fromStdString(lic.GetPlate());
 
         lic.SetWarnings();
+        lic.DBInfoLoad();
         lic.SetSeparator('-');
 
         infoList->addItem(tr("Analise de caracteres: %1 ms").arg(t.elapsed()));

@@ -89,6 +89,7 @@ private:
     void createLayouts();
     void readSettings();
     void OCR();
+    void showWarningsDialog(int warnings);
     void enableDisplay();
     void disableDisplay();
 
