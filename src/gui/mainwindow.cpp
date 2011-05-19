@@ -35,7 +35,6 @@
 #include "../connection.h"
 #include "../cv/FindPlate.h"
 #include "../licenseplatestring.h"
-#include "../cv/GLWindow.h"
 
 #include "opencv2/imgproc/imgproc.hpp" // still needed for outdated cam processing
                                        // it will be removed soon
@@ -340,15 +339,12 @@ void MainWindow::importImageDir()
 
 void MainWindow::importCam()
 {
-    stop();
-    GLWindow *windowGL = new GLWindow(); // CRASHING
-    camLabel->hide();
-    windowGL->openCamera();
+    // TODO Implement this
 }
 
 void MainWindow::importVideo()
 {
-    // TODO Implement it
+    // TODO Implement this
 }
 
 void MainWindow::about()
@@ -781,6 +777,8 @@ void MainWindow::OCR()
         if (lic.DBInfoLoad())
             plateExists = true;
         lic.SetSeparator('-');
+        infoList->addItem(tr("%1").arg(QString().fromStdString(lic.GetPlate())));
+        infoList->addItem(tr("%1").arg(QString().fromStdString(lic.GetPlateWithSep())));
 
         infoList->addItem(tr("Analise de caracteres: %1 ms").arg(t.elapsed()));
     }
