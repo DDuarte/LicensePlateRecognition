@@ -31,9 +31,9 @@ DBViewer::DBViewer(QWidget *parent):
     QDialog(parent)
 {
     setWindowTitle(tr("Base de dados"));
-
     createUI();
 }
+
 void DBViewer::initializeModel(QSqlTableModel *model)
 {
     model->setTable("plates");

@@ -65,7 +65,7 @@ namespace rdm
         cv::Size targetSize = target.size();
         int targetWidth = targetSize.width;
         int targetHeight = targetSize.height;
-        int newWidth = static_cast<int>(9.3 * targetWidth);
+        int newWidth = 10 * targetWidth;
         this->SetPlateWidth(newWidth);
                       // 9.3 -> ratio between target width and plate size "average"
 
@@ -151,7 +151,14 @@ namespace rdm
 
     void FindPlate::SaveImageToHardDrive(cv::Mat img, std::string fileName)
     {
-        cv::imwrite(fileName, img);
+        if (!img.empty())
+        {
+            cv::Mat result;
+            cv::threshold(img, result, 120, 255, cv::THRESH_BINARY_INV);
+            cv::erode(result, result, cv::Mat());
+
+            cv::imwrite(fileName, result);
+        }
     }
     
 }
