@@ -536,6 +536,8 @@ namespace rdm
     void LicensePlateString::Normalize()
     {
         this->RemoveNonAlphanumeric();
+        if (plate.size() > 6)
+            plate.erase(6);
         this->ToUpper();
     }
 
