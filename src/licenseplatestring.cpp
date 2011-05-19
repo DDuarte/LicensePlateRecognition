@@ -41,60 +41,60 @@ namespace rdm
 
     LicensePlateString::LicensePlateString():
         plate("00AA00"),
-		owner(""),
-		color(""),
-		year(0),
-		brand(""),
-		model(""),
-		registryTime(""),
-		warnings(0)
+        owner(""),
+        color(""),
+        year(0),
+        brand(""),
+        model(""),
+        registryTime(""),
+        warnings(0)
     {
     }
     
     LicensePlateString::LicensePlateString(std::string& plate):
         plate(plate),
-		owner(""),
-		color(""),
-		year(0),
-		brand(""),
-		model(""),
-		registryTime(""),
-		warnings(0)
+        owner(""),
+        color(""),
+        year(0),
+        brand(""),
+        model(""),
+        registryTime(""),
+        warnings(0)
     {
     }
     
     LicensePlateString::LicensePlateString(std::string& a, std::string& b, std::string& c):
         plate(a + b + c),
-		owner(""),
-		color(""),
-		year(0),
-		brand(""),
-		model(""),
-		registryTime(""),
-		warnings(0)
+        owner(""),
+        color(""),
+        year(0),
+        brand(""),
+        model(""),
+        registryTime(""),
+        warnings(0)
     {
     }
     
     LicensePlateString::LicensePlateString(char* plate):
         plate(plate),
-		owner(""),
-		color(""),
-		year(0),
-		brand(""),
-		model(""),
-		registryTime(""),
-		warnings(0)
+        owner(""),
+        color(""),
+        year(0),
+        brand(""),
+        model(""),
+        registryTime(""),
+        warnings(0)
     {
     }
     
     LicensePlateString::LicensePlateString(char a[], char b[], char c[]):
-		owner(""),
-		color(""),
-		year(0),
-		brand(""),
-		model(""),
-		registryTime(""),
-		warnings(0)
+        owner(""),
+        color(""),
+        year(0),
+        brand(""),
+        model(""),
+        registryTime(""),
+        warnings(0)
     {
         std::string str1 = a;
         std::string str2 = b;
@@ -104,13 +104,13 @@ namespace rdm
 
     LicensePlateString::LicensePlateString(QString plate):
         plate(plate.toStdString()),
-		owner(""),
-		color(""),
-		year(0),
-		brand(""),
-		model(""),
-		registryTime(""),
-		warnings(0)
+        owner(""),
+        color(""),
+        year(0),
+        brand(""),
+        model(""),
+        registryTime(""),
+        warnings(0)
     {
     }
 
@@ -344,23 +344,23 @@ namespace rdm
     
     void LicensePlateString::RemoveNonAlphanumeric()
     {
-		SetPlate(RemoveNonAlphanumeric(GetPlate()));
+        SetPlate(RemoveNonAlphanumeric(GetPlate()));
     }
 
-	std::string LicensePlateString::RemoveNonAlphanumeric(std::string string)
-	{
-		if (string.size() <= 0)
-			return "";
-		for (int i = 0; i < static_cast<int>(string.size()); i++)
-			if (string[i] <= static_cast<int>(0) ||
-				string[i] >= static_cast<int>(256) ||
-				!std::isalnum(string[i]))
-			{
-				string.erase(i, 1);
-				i--;
-			}
-		return string;
-	}
+    std::string LicensePlateString::RemoveNonAlphanumeric(std::string string)
+    {
+        if (string.size() <= 0)
+            return "";
+        for (int i = 0; i < static_cast<int>(string.size()); i++)
+            if (string[i] <= static_cast<int>(0) ||
+                string[i] >= static_cast<int>(256) ||
+                !std::isalnum(string[i]))
+            {
+                string.erase(i, 1);
+                i--;
+            }
+        return string;
+    }
 
 
     bool LicensePlateString::DBConnectionCreate()
@@ -573,15 +573,15 @@ namespace rdm
             return QString("");
         }
         QTextStream stream(&file);
-		QString line;
+        QString line;
         
-		while (!stream.atEnd())
-		{
-			line = stream.readLine();
-			line = QString().fromStdString(RemoveNonAlphanumeric(line.simplified().toStdString()));
-			if (!line.isEmpty())
-				break;
-		}
+        while (!stream.atEnd())
+        {
+            line = stream.readLine();
+            line = QString().fromStdString(RemoveNonAlphanumeric(line.simplified().toStdString()));
+            if (!line.isEmpty())
+                break;
+        }
         file.close();
         return line;
     }

@@ -76,25 +76,25 @@ MainWindow::MainWindow()
 
 void MainWindow::createActions()
 {
-	startAction = new QAction(tr("Iniciar"), this);
-	startAction->setIcon(QIcon(":/images/start.png"));
-	startAction->setShortcut(QKeySequence::New); // Ctrl + N
-	startAction->setStatusTip(tr("Inicia a captura de vídeo ou imagem"));
-	connect(startAction, SIGNAL(triggered()), this, SLOT(startChoose()));
+    startAction = new QAction(tr("Iniciar"), this);
+    startAction->setIcon(QIcon(":/images/start.png"));
+    startAction->setShortcut(QKeySequence::New); // Ctrl + N
+    startAction->setStatusTip(tr("Inicia a captura de vídeo ou imagem"));
+    connect(startAction, SIGNAL(triggered()), this, SLOT(startChoose()));
 
-	refreshAction = new QAction(tr("Actualizar"), this);
-	refreshAction->setIcon(QIcon(":/images/refresh.png"));
-	refreshAction->setShortcut(QKeySequence::Refresh); // F5
-	refreshAction->setStatusTip(tr("Actualiza a captura de vídeo ou imagem"));
-	refreshAction->setDisabled(true);
-	connect(refreshAction, SIGNAL(triggered()), this, SLOT(refresh()));
+    refreshAction = new QAction(tr("Actualizar"), this);
+    refreshAction->setIcon(QIcon(":/images/refresh.png"));
+    refreshAction->setShortcut(QKeySequence::Refresh); // F5
+    refreshAction->setStatusTip(tr("Actualiza a captura de vídeo ou imagem"));
+    refreshAction->setDisabled(true);
+    connect(refreshAction, SIGNAL(triggered()), this, SLOT(refresh()));
 
-	stopAction = new QAction(tr("Parar"), this);
-	stopAction->setIcon(QIcon(":/images/stop.png"));
-	stopAction->setShortcut(QKeySequence::Delete); // Delete
-	stopAction->setStatusTip(tr("Para a captura de vídeo ou imagem"));
-	stopAction->setDisabled(true);
-	connect(stopAction, SIGNAL(triggered()), this, SLOT(stop()));
+    stopAction = new QAction(tr("Parar"), this);
+    stopAction->setIcon(QIcon(":/images/stop.png"));
+    stopAction->setShortcut(QKeySequence::Delete); // Delete
+    stopAction->setStatusTip(tr("Para a captura de vídeo ou imagem"));
+    stopAction->setDisabled(true);
+    connect(stopAction, SIGNAL(triggered()), this, SLOT(stop()));
 
     takeScreenshotAction = new QAction(tr("Capturar ecrã"), this);
     takeScreenshotAction->setIcon(QIcon(":images/screenshot.png"));
@@ -103,11 +103,11 @@ void MainWindow::createActions()
     takeScreenshotAction->setDisabled(true);
     connect(takeScreenshotAction, SIGNAL(triggered()), this, SLOT(takeScreenshot()));
 
-	dbViewerAction = new QAction(tr("Base de dados"), this);
-	dbViewerAction->setIcon(QIcon(":/images/db.png"));
-	dbViewerAction->setShortcut(QKeySequence::New); // Ctrl + N
-	dbViewerAction->setStatusTip(tr("Mostra/adiciona/elimina os automóveis registados"));
-	connect(dbViewerAction, SIGNAL(triggered()), this, SLOT(dbViewer()));
+    dbViewerAction = new QAction(tr("Base de dados"), this);
+    dbViewerAction->setIcon(QIcon(":/images/db.png"));
+    dbViewerAction->setShortcut(QKeySequence::New); // Ctrl + N
+    dbViewerAction->setStatusTip(tr("Mostra/adiciona/elimina os automóveis registados"));
+    connect(dbViewerAction, SIGNAL(triggered()), this, SLOT(dbViewer()));
 
     importImageAction = new QAction(tr("Imagem"), this);
     importImageAction->setIcon(QIcon(":images/image.png"));
@@ -115,17 +115,17 @@ void MainWindow::createActions()
     importImageAction->setStatusTip(tr("Carrega uma imagem para ser analisada"));
     connect(importImageAction, SIGNAL(triggered()), this, SLOT(importImage()));
 
-	importImageDirAction = new QAction(tr("Directório"), this);
-	importImageDirAction->setIcon(QIcon(":images/loadimagedir.png"));
-	importImageDirAction->setShortcut(QKeySequence::Forward); // ?
-	importImageDirAction->setStatusTip(tr("Analisa todas as imagens de uma dada pasta"));
-	connect(importImageDirAction, SIGNAL(triggered()), this, SLOT(importImageDir()));
+    importImageDirAction = new QAction(tr("Directório"), this);
+    importImageDirAction->setIcon(QIcon(":images/loadimagedir.png"));
+    importImageDirAction->setShortcut(QKeySequence::Forward); // ?
+    importImageDirAction->setStatusTip(tr("Analisa todas as imagens de uma dada pasta"));
+    connect(importImageDirAction, SIGNAL(triggered()), this, SLOT(importImageDir()));
 
-	importVideoAction = new QAction(tr("Vídeo"), this);
-	importVideoAction->setIcon(QIcon(":images/video.png"));
-	importVideoAction->setShortcut(QKeySequence::Undo); // Ctrl + Z
-	importVideoAction->setStatusTip(tr("Carrega um vídeo para ser analisado"));
-	connect(importVideoAction, SIGNAL(triggered()), this, SLOT(importVideo()));
+    importVideoAction = new QAction(tr("Vídeo"), this);
+    importVideoAction->setIcon(QIcon(":images/video.png"));
+    importVideoAction->setShortcut(QKeySequence::Undo); // Ctrl + Z
+    importVideoAction->setStatusTip(tr("Carrega um vídeo para ser analisado"));
+    connect(importVideoAction, SIGNAL(triggered()), this, SLOT(importVideo()));
 
     importCamAction = new QAction(tr("Câmara"), this);
     importCamAction->setIcon(QIcon(":images/webcam.png"));
@@ -145,17 +145,17 @@ void MainWindow::createActions()
     helpAction->setStatusTip(tr("Mostra a ajuda e procedimentos"));
     connect(helpAction, SIGNAL(triggered()), this, SLOT(help()));
 
-	aboutAction = new QAction(tr("Sobre nós..."), this);
-	aboutAction->setIcon(QIcon(":/images/about.png"));
-	aboutAction->setShortcut(QKeySequence::WhatsThis); // Shift + F1
-	aboutAction->setStatusTip(tr("Mostra informações sobre quem nós somos"));
-	connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
+    aboutAction = new QAction(tr("Sobre nós..."), this);
+    aboutAction->setIcon(QIcon(":/images/about.png"));
+    aboutAction->setShortcut(QKeySequence::WhatsThis); // Shift + F1
+    aboutAction->setStatusTip(tr("Mostra informações sobre quem nós somos"));
+    connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
 
-	exitAction = new QAction(tr("Sair"), this);
-	exitAction->setIcon(QIcon(":/images/exit.png"));
-	exitAction->setShortcut(QKeySequence::Quit); // Ctrl + Esc
-	exitAction->setStatusTip(tr("Termina o programa"));
-	connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
+    exitAction = new QAction(tr("Sair"), this);
+    exitAction->setIcon(QIcon(":/images/exit.png"));
+    exitAction->setShortcut(QKeySequence::Quit); // Ctrl + Esc
+    exitAction->setStatusTip(tr("Termina o programa"));
+    connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
 
     // Not yet implemeted stuff
     helpAction->setDisabled(true);
@@ -209,7 +209,7 @@ void MainWindow::createToolBars()
     toolBar->addAction(dbViewerAction);
     toolBar->addSeparator();
     toolBar->addAction(importImageAction);
-	toolBar->addAction(importImageDirAction);
+    toolBar->addAction(importImageDirAction);
     toolBar->addAction(importVideoAction);
     toolBar->addAction(importCamAction);
     toolBar->addSeparator();
@@ -303,18 +303,18 @@ void MainWindow::importImage()
 
 void MainWindow::importImageDir()
 {
-	stop();
-	
+    stop();
+    
 
-	QFileDialog dialog(this);
-	dialog.setFileMode(QFileDialog::Directory);
-	dialog.setViewMode(QFileDialog::Detail);
-	QStringList dir;
-	if (dialog.exec())
-	{
-		dir = dialog.selectedFiles();
-		startImageDir(&dir);
-	}
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::Directory);
+    dialog.setViewMode(QFileDialog::Detail);
+    QStringList dir;
+    if (dialog.exec())
+    {
+        dir = dialog.selectedFiles();
+        startImageDir(&dir);
+    }
 
 }
 
@@ -444,7 +444,7 @@ void MainWindow::startImage()
     a.SetConfidenceMinium(50);
 
     a.Go();
-	cv::Mat procFull = rdm::FindPlate::ConvertToRGB(a.GetFullImage());
+    cv::Mat procFull = rdm::FindPlate::ConvertToRGB(a.GetFullImage());
     cv::Mat procPlate = rdm::FindPlate::ConvertToRGB(a.GetPlateImage());
     QImage fullImage = a.GetQImageFromMat(procFull);
     camLabel->setPixmap(QPixmap::fromImage(fullImage)); // full image
@@ -457,22 +457,22 @@ void MainWindow::startImage()
 
     infoList->addItem(tr("Processar imagem: %1 ms").arg(t.elapsed()));
     
-	// if (!plateImage.isNull())
+    // if (!plateImage.isNull())
     OCR();
 }
 
 void MainWindow::startImageDir(QStringList* dir)
 {
-	QDir directory(dir->at(0));
-	directory.refresh();
-	//QDirIterator dirIterator(dir->at(0), QDir::Filter::Files);
-	QDirIterator dirIterator(directory);
-	int i = 0;
-	while (i < 10 && dirIterator.hasNext())
-	{
-		qDebug() << dirIterator.fileName();
-		qDebug() << i++;
-	}
+    QDir directory(dir->at(0));
+    directory.refresh();
+    //QDirIterator dirIterator(dir->at(0), QDir::Filter::Files);
+    QDirIterator dirIterator(directory);
+    int i = 0;
+    while (i < 10 && dirIterator.hasNext())
+    {
+        qDebug() << dirIterator.fileName();
+        qDebug() << i++;
+    }
 }
 
 void MainWindow::stop()
@@ -630,15 +630,15 @@ void MainWindow::refreshDBSettings()
     {
          dbStatus->setPixmap(QPixmap(":/images/wrong.png"));
          dbStatus->setToolTip(tr("Não conectado"));
-		 dbViewerAction->setDisabled(true);
-		 dbViewerAction->setToolTip(tr("Não foi possível ligar à base de dados. Por favor, altere a configuração."));
+         dbViewerAction->setDisabled(true);
+         dbViewerAction->setToolTip(tr("Não foi possível ligar à base de dados. Por favor, altere a configuração."));
     }
     else
     {
          dbStatus->setPixmap(QPixmap(":images/correct.png"));
          dbStatus->setToolTip(tr("Conectado"));
-		 dbViewerAction->setEnabled(true);
-		 dbViewerAction->setStatusTip(tr("Mostra/adiciona/elimina automóveis registados"));
+         dbViewerAction->setEnabled(true);
+         dbViewerAction->setStatusTip(tr("Mostra/adiciona/elimina automóveis registados"));
     }
 }
 
@@ -718,21 +718,21 @@ void MainWindow::OCR()
 {
     QTime t;
     t.start();
-	rdm::LicensePlateString lic("ERRO: Não encontrada.");
-	if (!plateLabel->pixmap()->isNull())
-	{
-		lic.SetPlate(rdm::LicensePlateString::RunOCR().toStdString());
-		qDebug() << QString().fromStdString(lic.GetPlate());
-		lic.Normalize();
-		qDebug() << QString().fromStdString(lic.GetPlate());
+    rdm::LicensePlateString lic("ERRO: Não encontrada.");
+    if (!plateLabel->pixmap()->isNull())
+    {
+        lic.SetPlate(rdm::LicensePlateString::RunOCR().toStdString());
+        qDebug() << QString().fromStdString(lic.GetPlate());
+        lic.Normalize();
+        qDebug() << QString().fromStdString(lic.GetPlate());
 
-		lic.SetWarnings();
-		lic.SetSeparator('-');
+        lic.SetWarnings();
+        lic.SetSeparator('-');
 
-		infoList->addItem(tr("Analise de caracteres: %1 ms").arg(t.elapsed()));
-	}
+        infoList->addItem(tr("Analise de caracteres: %1 ms").arg(t.elapsed()));
+    }
 
-	infoList->addItem(tr("Warnings: %1").arg(lic.GetWarnings()));
+    infoList->addItem(tr("Warnings: %1").arg(lic.GetWarnings()));
     
     QTableWidgetItem *plateItem = new QTableWidgetItem(QString().fromStdString(lic.GetPlateWithSep()));
     QTableWidgetItem *colorItem = new QTableWidgetItem("N/A");

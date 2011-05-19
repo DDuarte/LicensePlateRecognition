@@ -56,17 +56,17 @@ public:
     QLabel *dbStatus;
 
 private slots:
-	void startChoose();
-	void refresh();
-	void stop();
-	void takeScreenshot();
-	void dbViewer();
-	void importImage();
-	void importImageDir();
-	void importVideo();
-	void importCam();
-	void setSettings();
-	void writeSettings();
+    void startChoose();
+    void refresh();
+    void stop();
+    void takeScreenshot();
+    void dbViewer();
+    void importImage();
+    void importImageDir();
+    void importVideo();
+    void importCam();
+    void setSettings();
+    void writeSettings();
     void about();
     void help();
 
@@ -92,23 +92,23 @@ private:
     void enableDisplay();
     void disableDisplay();
 
-	void startImage();
-	void startImageDir(QStringList* dir);
-	
+    void startImage();
+    void startImageDir(QStringList* dir);
+    
     void clock();
 
     QString plate;
     QString fileName;
-	QString dirFileName;
+    QString dirFileName;
 
-	QAction *startAction;
-	QAction *refreshAction;
-	QAction *stopAction;
+    QAction *startAction;
+    QAction *refreshAction;
+    QAction *stopAction;
     QAction *takeScreenshotAction;
-	QAction *dbViewerAction;
+    QAction *dbViewerAction;
     QAction *importImageAction;
-	QAction *importImageDirAction;
-	QAction *importVideoAction;
+    QAction *importImageDirAction;
+    QAction *importVideoAction;
     QAction *importCamAction;
     QAction *settingsAction;
     QAction *aboutAction;

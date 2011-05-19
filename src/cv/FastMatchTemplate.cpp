@@ -289,7 +289,7 @@ DrawFoundTargets(Mat*                  image,
                  int                   green,
                  int                   blue,
                  int                   lineSize,
-				 int                   plateWidth)
+                 int                   plateWidth)
 {
     int numPoints = pointsList.size();
     for(int currPoint = 0; currPoint < numPoints; currPoint++)
