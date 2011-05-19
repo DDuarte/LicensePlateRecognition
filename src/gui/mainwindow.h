@@ -46,7 +46,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow();
 
-    // TODO move this to private (move createConnect to this class)
+    // TODO move this to private (move createConnect (DB) to this class)
     QString dbUser;
     QString dbPass;
     QString dbPort;
@@ -153,19 +153,10 @@ private:
     QLineEdit *serverLineEdit;
     QComboBox *typeComboBox;
     QLineEdit *nameLineEdit;
-    
-    /* CV:, TODO: move to new file/class */
-    cv::Mat     mImage2;
-    cv::Mat     tmpImg;
-    IplImage    *sub;
 
     /* CV CAM */
-    cv::Mat mImageCam;
     bool mCameraRunning;
     cv::VideoCapture mCap;
-    QTimer mCameraTimer;
-    QTime *mTime;
-    double mFPS;
 
 };
 
