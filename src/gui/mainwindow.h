@@ -22,8 +22,6 @@
 ****************************************************************************/
 
 #include <QMainWindow>
-#include <QTimer>
-#include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
 class QLabel;
@@ -94,7 +92,7 @@ private:
     void disableDisplay();
 
     void startImage();
-    void startImageDir(QStringList* dir);
+    void startImageDir(QString dir);
     
     void clock();
 

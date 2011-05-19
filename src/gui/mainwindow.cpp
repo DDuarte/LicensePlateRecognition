@@ -26,8 +26,9 @@
 #include <QDateTime>
 #include <QFile>
 #include <QTextStream>
-#include <QFileDialog>
-#include <QDir> 
+//#include <QFileDialog>
+#include <QDir>
+#include <QFileInfoList>
 
 #include "mainwindow.h"
 #include "dbviewer.h"
@@ -37,7 +38,7 @@
 #include "../cv/GLWindow.h"
 
 #include "opencv2/imgproc/imgproc.hpp" // still needed for outdated cam processing
-                                 // it will be removed soon
+                                       // it will be removed soon
 
 MainWindow::MainWindow()
 {    
@@ -61,6 +62,7 @@ MainWindow::MainWindow()
 
     dbViewerWin = 0;
     mCameraRunning = false;
+    loadDirLabel = new QLabel(loadPath);
 
     setWindowIcon(QIcon(":/images/icon.png"));
     setWindowTitle(tr("Reconhecimento Digital de Matrículas - Versão 0.3"));
@@ -159,9 +161,8 @@ void MainWindow::createActions()
 
     // Not yet implemeted stuff
     helpAction->setDisabled(true);
-    importCamAction->setDisabled(true);
+    importCamAction->setDisabled(false);
     importVideoAction->setDisabled(true);
-    importImageDirAction->setDisabled(true);
 }
 
 void MainWindow::createGroupBoxes()
@@ -304,18 +305,13 @@ void MainWindow::importImage()
 void MainWindow::importImageDir()
 {
     stop();
+
+    QFileDialog::Options options = QFileDialog::DontResolveSymlinks | QFileDialog::ShowDirsOnly;
+    QString directory = QFileDialog::getExistingDirectory(this,
+        tr("Pasta para carregar imagens"), loadDirLabel->text(), options);
+    if (!directory.isEmpty()) // -> QString.isEmpty()
+        startImageDir(directory);
     
-
-    QFileDialog dialog(this);
-    dialog.setFileMode(QFileDialog::Directory);
-    dialog.setViewMode(QFileDialog::Detail);
-    QStringList dir;
-    if (dialog.exec())
-    {
-        dir = dialog.selectedFiles();
-        startImageDir(&dir);
-    }
-
 }
 
 void MainWindow::importCam()
@@ -365,11 +361,13 @@ void MainWindow::startChoose()
 {
     QMessageBox msgBox;
     QPushButton *image = msgBox.addButton(tr("Imagem estática"), QMessageBox::ActionRole);
+    QPushButton *dir = msgBox.addButton(tr("Directório"), QMessageBox::ActionRole);
     QPushButton *cam = msgBox.addButton(tr("Câmara de Vídeo"), QMessageBox::ActionRole);
     QPushButton *video = msgBox.addButton(tr("Ficheiro de Vídeo"), QMessageBox::ActionRole);
     QPushButton *cancel = msgBox.addButton(tr("Cancelar"), QMessageBox::RejectRole);
 
     image->setIcon(QIcon(":images/image.png"));
+    dir->setIcon(QIcon(":images/loadimagedir.png"));
     cam->setIcon(QIcon(":images/webcam.png"));
     video->setIcon(QIcon(":images/video.png"));
     cancel->setIcon(QIcon(":images/cancel.png"));
@@ -380,6 +378,8 @@ void MainWindow::startChoose()
     msgBox.exec();
     if (msgBox.clickedButton() == image)
         importImage();
+    else if (msgBox.clickedButton() == dir)
+        importImageDir();
     else if (msgBox.clickedButton() == cam)
         importCam();
     else if (msgBox.clickedButton() == video)
@@ -461,18 +461,46 @@ void MainWindow::startImage()
     OCR();
 }
 
-void MainWindow::startImageDir(QStringList* dir)
+void MainWindow::startImageDir(QString dir)
 {
-    QDir directory(dir->at(0));
-    directory.refresh();
-    //QDirIterator dirIterator(dir->at(0), QDir::Filter::Files);
-    QDirIterator dirIterator(directory);
-    int i = 0;
-    while (i < 10 && dirIterator.hasNext())
+    QDir directory;
+    QStringList imageFilters;
+    imageFilters << "*.jpg" << "*.png" << "*.bmp" << "*.gif" << "*.tiff";
+    directory.setFilter(QDir::Files);
+    directory.setNameFilters(imageFilters);
+    directory.setPath(dir);
+
+    QStringList list = directory.entryList();
+
+    cv::Mat target = cv::imread(platePath.toStdString());
+
+    QTime t;
+    t.start();
+    for (int i = 0; i < list.size() && i < 10; i++)
     {
-        qDebug() << dirIterator.fileName();
-        qDebug() << i++;
+        QString sourceString = dir + "/" + list.at(i);
+
+        cv::Mat source = cv::imread(sourceString.toStdString());
+        
+        rdm::FindPlate a(source);
+        a.SetTarget(target);
+        a.SetConfidenceMinium(50);
+
+        a.Go();
+
+        cv::Mat procPlate = a.GetPlateImage(); // this is pretty redundant
+        QImage plateImage = a.GetQImageFromMat(procPlate);
+        plateLabel->setPixmap(QPixmap::fromImage(plateImage));
+        rdm::FindPlate::SaveImageToHardDrive(procPlate, "plate.jpg");
+
+        disableDisplay();
+
+        // if (!plateImage.isNull())
+        OCR();
     }
+    infoList->addItem(tr("Processar %2 imagens: %1 ms").arg(t.elapsed()).arg(list.size()));
+    
+
 }
 
 void MainWindow::stop()
@@ -511,7 +539,6 @@ void MainWindow::setSettings()
     settingsWindow->setWindowModality(Qt::WindowModal);
     settingsWindow->setWindowTitle(tr("Configurações"));
 
-    loadDirLabel = new QLabel(loadPath, settingsWindow);
     QPushButton *loadDirButton;
     loadDirButton = new QPushButton(tr("Pasta para carregar imagens"), settingsWindow);
     loadDirButton->setIcon(QIcon(":images/load.png"));
@@ -553,7 +580,7 @@ void MainWindow::setSettings()
     passLineEdit->setEchoMode(QLineEdit::Password);
     portSpinBox->setRange(1,65535);
     portSpinBox->setValue(dbPort.toInt());
-    typeComboBox->addItem("MySQL"); // Atm MySQL is the only DB supported
+    typeComboBox->addItem("MySQL"); // At this moment only MySQL is supported
     typeComboBox->setCurrentIndex(0);
 
     QFormLayout *dbLayout;
@@ -693,7 +720,7 @@ void MainWindow::setLoadDirectory()
      QFileDialog::Options options = QFileDialog::DontResolveSymlinks | QFileDialog::ShowDirsOnly;
      QString directory = QFileDialog::getExistingDirectory(this,
          tr("Pasta para carregar imagens"), loadDirLabel->text(), options);
-     if (!directory.isEmpty())
+     if (!directory.isEmpty()) // -> QString.isEmpty()
          loadDirLabel->setText(directory);
 }
 
@@ -730,8 +757,6 @@ void MainWindow::OCR()
 
         infoList->addItem(tr("Analise de caracteres: %1 ms").arg(t.elapsed()));
     }
-
-    infoList->addItem(tr("Warnings: %1").arg(lic.GetWarnings()));
     
     QTableWidgetItem *plateItem = new QTableWidgetItem(QString().fromStdString(lic.GetPlateWithSep()));
     QTableWidgetItem *colorItem = new QTableWidgetItem("N/A");
@@ -742,7 +767,7 @@ void MainWindow::OCR()
     plateTable->setItem(0, 0, plateItem);
     plateTable->setItem(1, 0, colorItem);
     plateTable->setItem(2, 0, hourItem);
-    plateTable->setItem(3, 0, dateItem);
+    plateTable->setItem(3, 0, dateItem);        
     plateTable->setItem(4, 0, warnItem);
     plateTable->setItem(5, 0, passItem);
 
