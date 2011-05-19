@@ -26,9 +26,9 @@
 #include <QDateTime>
 #include <QFile>
 #include <QTextStream>
-//#include <QFileDialog>
 #include <QDir>
 #include <QFileInfoList>
+#include <QSizePolicy>
 
 #include "mainwindow.h"
 #include "dbviewer.h"
@@ -65,15 +65,20 @@ MainWindow::MainWindow()
     loadDirLabel = new QLabel(loadPath);
 
     setWindowIcon(QIcon(":/images/icon.png"));
-    setWindowTitle(tr("Reconhecimento Digital de Matrículas - Versão 0.3"));
-    setStyleSheet(
-        "MainWindow"
-        "{"
-            "background-color:"
-                "qlineargradient(spread:pad, x1:0.468055, y1:1, x2:0.482826, y2:0, stop:0 rgba(98, 206, 255, 255),"
-                "stop:1 rgba(255, 255, 255, 255));"
-        "}");
+    setWindowTitle(tr("Reconhecimento Digital de Matrículas - Versão 0.6"));
+    setStyleSheet(StyleSheet());
+
     infoList->addItem((tr("Início: %1 ms").arg(t.elapsed())));
+}
+
+const QString MainWindow::StyleSheet()
+{
+    return "MainWindow"
+           "{"
+               "background-color:"
+                   "qlineargradient(spread:pad, x1:0.468055, y1:1, x2:0.482826, y2:0, stop:0 rgba(98, 206, 255, 255),"
+                    "stop:1 rgba(255, 255, 255, 255));"
+           "}";
 }
 
 void MainWindow::createActions()
@@ -161,43 +166,11 @@ void MainWindow::createActions()
 
     // Not yet implemeted stuff
     helpAction->setDisabled(true);
-    importCamAction->setDisabled(false);
+    importCamAction->setDisabled(true);
     importVideoAction->setDisabled(true);
 }
 
-void MainWindow::createGroupBoxes()
-{
-    camGroupBox = new QGroupBox(tr("Vídeo/imagem ao vivo"), this);
-    camGroupBox->setMinimumSize(300, 225);
-    camGroupBox->setMaximumSize(1024, 768);
-    camGroupBox->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    plateGroupBox = new QGroupBox(tr("Último veículo detectado"), this);
-    listGroupBox = new QGroupBox(tr("Lista de veículos"), this);
-    infoGroupBox = new QGroupBox(QObject::tr("Informações técnicas"), this);
-}
-
-void MainWindow::createLabels()
-{
-    camLabel = new QLabel("pixmap",camGroupBox);
-    camLabel->setMinimumSize(camGroupBox->minimumSize());
-    camLabel->setMaximumSize(camGroupBox->maximumSize());
-    camLabel->setAlignment(Qt::AlignCenter);
-    camLabel->setScaledContents(true);
-
-    plateLabel = new QLabel(tr("Placa não encontrada"),plateGroupBox);
-    plateLabel->setScaledContents(false);
-    plateLabel->setAlignment(Qt::AlignCenter);
-
-    clockLabel = new QLabel(infoGroupBox);
-
-    if (!camLabel->pixmap() || !plateLabel->pixmap()) {
-            plateGroupBox->hide();
-            camGroupBox->hide();
-        } // Fixme: find me a better place to live
-}
-
 void MainWindow::createToolBars() 
-
 {
     QToolBar *toolBar;
     toolBar = addToolBar(tr("&Geral"));
@@ -223,9 +196,41 @@ void MainWindow::createToolBars()
     toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 }
 
+void MainWindow::createGroupBoxes()
+{
+    camGroupBox = new QGroupBox(tr("Vídeo/imagem ao vivo"), this);
+    camGroupBox->setMinimumSize(384, 288);
+    camGroupBox->setMaximumSize(768, 576);
+    camGroupBox->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    plateGroupBox = new QGroupBox(tr("Último veículo detectado"), this);
+    plateGroupBox->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    listGroupBox = new QGroupBox(tr("Lista de veículos"), this);
+    infoGroupBox = new QGroupBox(QObject::tr("Informações técnicas"), this);
+}
+
+void MainWindow::createLabels()
+{
+    camLabel = new QLabel("pixmap", camGroupBox);
+    camLabel->setMinimumSize(camGroupBox->minimumSize());
+    camLabel->setMaximumSize(camGroupBox->maximumSize());
+    camLabel->setAlignment(Qt::AlignCenter);
+    camLabel->setScaledContents(true);
+
+    plateLabel = new QLabel(tr("Placa não encontrada"), plateGroupBox);
+    plateLabel->setMaximumSize(460, 115);
+    plateLabel->setScaledContents(true);
+
+    clockLabel = new QLabel(infoGroupBox);
+
+    if (!camLabel->pixmap() || !plateLabel->pixmap()) {
+            plateGroupBox->hide();
+            camGroupBox->hide();
+        } // Fixme: find me a better place to live
+}
+
 void MainWindow::createTables()
 {
-    plateTable = new QTableWidget(6, 1, plateGroupBox); // 6 rows x 1 column
+    plateTable = new QTableWidget(6, 1); // 6 rows x 1 column
     plateTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     plateTable->setSortingEnabled(false);
     plateTable->setShowGrid(false);
@@ -237,6 +242,19 @@ void MainWindow::createTables()
     plateTable->setVerticalHeaderLabels(plateRows);
     plateTable->setHorizontalHeaderLabels(plateColumns);
     plateTable->resizeColumnsToContents();
+
+    extraPlateTable = new QTableWidget(6, 1); // 6 rows x 1 column ??
+    extraPlateTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    extraPlateTable->setSortingEnabled(false);
+    extraPlateTable->setShowGrid(false);
+    extraPlateTable->setGridStyle(Qt::SolidLine);
+    QStringList extraPlateRows;
+    QStringList extraPlateColumns;
+    extraPlateRows << tr("Proprietário") << tr("Cor") << tr("Ano de compra") << tr("Marca") << tr("Modelo") << tr("Registo");
+    extraPlateColumns << tr("Informações");
+    extraPlateTable->setVerticalHeaderLabels(extraPlateRows);
+    extraPlateTable->setHorizontalHeaderLabels(extraPlateColumns);
+    extraPlateTable->hide();
 
     listTable = new QTableWidget(0, 5, listGroupBox); // 5 column - empty table
     listTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -268,9 +286,16 @@ void MainWindow::createLayouts()
     layoutCam = new QHBoxLayout(camGroupBox);
     layoutCam->addWidget(camLabel);
 
+    layoutInfoPlate = new QHBoxLayout;
+    layoutInfoPlate->addStretch();
+    layoutInfoPlate->addWidget(plateTable);
+    layoutInfoPlate->addWidget(extraPlateTable);
+    layoutInfoPlate->addStretch();
+
     layoutPlate = new QVBoxLayout(plateGroupBox);
     layoutPlate->addWidget(plateLabel);
-    layoutPlate->addWidget(plateTable);
+    layoutPlate->setAlignment(Qt::AlignHCenter);
+    layoutPlate->addLayout(layoutInfoPlate);
 
     layoutList = new QHBoxLayout(listGroupBox);
     layoutList->addWidget(listTable);
@@ -311,7 +336,6 @@ void MainWindow::importImageDir()
         tr("Pasta para carregar imagens"), loadDirLabel->text(), options);
     if (!directory.isEmpty()) // -> QString.isEmpty()
         startImageDir(directory);
-    
 }
 
 void MainWindow::importCam()
@@ -746,13 +770,16 @@ void MainWindow::OCR()
     QTime t;
     t.start();
     rdm::LicensePlateString lic("ERRO: Não encontrada.");
+    bool plateExists = false;
+
     if (!plateLabel->pixmap()->isNull())
     {
         lic.SetPlate(rdm::LicensePlateString::RunOCR().toStdString());
         lic.Normalize();
 
         lic.SetWarnings();
-        lic.DBInfoLoad();
+        if (lic.DBInfoLoad())
+            plateExists = true;
         lic.SetSeparator('-');
 
         infoList->addItem(tr("Analise de caracteres: %1 ms").arg(t.elapsed()));
@@ -767,9 +794,27 @@ void MainWindow::OCR()
     plateTable->setItem(0, 0, plateItem);
     plateTable->setItem(1, 0, colorItem);
     plateTable->setItem(2, 0, hourItem);
-    plateTable->setItem(3, 0, dateItem);        
+    plateTable->setItem(3, 0, dateItem);
     plateTable->setItem(4, 0, warnItem);
     plateTable->setItem(5, 0, passItem);
+
+    if (plateExists)
+    {
+        QTableWidgetItem *ownerItemE = new QTableWidgetItem(QString().fromStdString(lic.GetOwner()));
+        QTableWidgetItem *colorItemE = new QTableWidgetItem(QString().fromStdString(lic.GetColor()));
+        QTableWidgetItem *yearItemE = new QTableWidgetItem(QString("%1").arg(lic.GetYear()));
+        QTableWidgetItem *brandItemE = new QTableWidgetItem(QString().fromStdString(lic.GetBrand()));
+        QTableWidgetItem *modelItemE = new QTableWidgetItem(QString().fromStdString(lic.GetModel()));
+        QTableWidgetItem *registItemE = new QTableWidgetItem(QString().fromStdString(lic.GetRegistryTime()));
+        extraPlateTable->setItem(0, 0, ownerItemE);
+        extraPlateTable->setItem(1, 0, colorItemE);
+        extraPlateTable->setItem(2, 0, yearItemE);
+        extraPlateTable->setItem(3, 0, brandItemE);
+        extraPlateTable->setItem(4, 0, modelItemE);
+        extraPlateTable->setItem(5, 0, registItemE);
+        extraPlateTable->show();
+    }
+    else extraPlateTable->hide();
 
     QTableWidgetItem *plateItemT = new QTableWidgetItem(QString().fromStdString(lic.GetPlateWithSep()));
     QTableWidgetItem *colorItemT = new QTableWidgetItem("N/A");
@@ -783,9 +828,11 @@ void MainWindow::OCR()
     listTable->setItem(count, 2, hourItemT);
     listTable->setItem(count, 3, dateItemT);
     listTable->setItem(count, 4, warnItemT);
+    listTable->scrollToItem(plateItemT);
 
     this->plate = QString().fromStdString(lic.GetPlate());
 
     plateTable->resizeColumnsToContents();
+    extraPlateTable->resizeColumnsToContents();
     listTable->resizeColumnsToContents();
 }

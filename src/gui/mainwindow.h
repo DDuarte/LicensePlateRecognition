@@ -125,12 +125,14 @@ private:
     QGroupBox *infoGroupBox;
 
     QTableWidget *plateTable;
+    QTableWidget *extraPlateTable;
     QTableWidget *listTable;
 
     QListWidget *infoList;
 
     QHBoxLayout *layoutCam;
     QVBoxLayout *layoutPlate;
+    QHBoxLayout *layoutInfoPlate;
     QHBoxLayout *layoutList;
     QVBoxLayout *layoutInfo;
 
@@ -155,6 +157,9 @@ private:
     /* CV CAM */
     bool mCameraRunning;
     cv::VideoCapture mCap;
+
+private: // static
+    static const QString StyleSheet();
 
 };
 

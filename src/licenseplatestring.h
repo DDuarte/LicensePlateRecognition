@@ -110,9 +110,6 @@ namespace rdm {
         virtual bool operator == (const LicensePlateString& other) const;
         virtual bool operator != (const LicensePlateString& other) const;
 
-        // virtual void Write(std::ostream& output = std::cout) const;
-        // virtual void WriteLine(std::ostream& output = std::cout) const;
-
         virtual bool IsValid() const;
         virtual bool IsStolen() const;
         virtual bool IsNotAuthorized() const;
@@ -141,7 +138,6 @@ namespace rdm {
         static QString GetWarningsText(int warnings);
 
         static std::string RemoveNonAlphanumeric(std::string string);
-
     };
 }
 
